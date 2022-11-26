@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "120900528263",
+    "project_id": "familyplus-df907",
+    "storage_bucket": "familyplus-df907.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120900528263:android:36c8a51c7d310fa4623022",
+        "android_client_info": {
+          "package_name": "com.example.family_plus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120900528263-2i97ssnm9c55maj6iaoh5nsjnjmvtk3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDowiK3muZZeJJVI7gIpXY8RiqXc5o5ZQM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120900528263-2i97ssnm9c55maj6iaoh5nsjnjmvtk3b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "120900528263-3ntc2i85dcci03q0p2nh8fd1b787hkoe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.familyPlus"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
