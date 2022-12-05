@@ -7,6 +7,7 @@ const addFamilyHandler = (request, h) => {
     const { idLeader, name } = request.payload;
     const members = [];
     const notes = [];
+    const rewards = [];
     const id = nanoid(16);
 
     const newFamily = {
@@ -14,7 +15,8 @@ const addFamilyHandler = (request, h) => {
         idLeader,
         name,
         members,
-        notes
+        notes,
+        rewards
     }
 
     const propertyCheck = () => {
@@ -41,7 +43,7 @@ const addFamilyHandler = (request, h) => {
             ...users[thisUser],
             family: id
         }
-        
+
         const response = h.response({
             status: 'success',
             message: 'Berhasil menambahkan family!'
@@ -73,9 +75,9 @@ const getAllFamilyHandler = (request, h) => {
 }
 
 const getSpesificFamilyHandler = (request, h) => {
-    const { id } = request.params;
+    const { idFamily } = request.params;
 
-    const selectedFamily = families.filter((family) => family.id === id)[0];
+    const selectedFamily = families.filter((family) => family.id === idFamily)[0];
 
     if(selectedFamily !== undefined){
         const response = h.response({
@@ -95,14 +97,14 @@ const getSpesificFamilyHandler = (request, h) => {
 }
 
 const addFamilyMemberHandler = (request, h) => {
-    const { id } = request.params;
+    const { idFamily } = request.params;
     const { idMember } = request.payload;
 
     const newMember = {
         id: idMember
     }
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
     const indexUser = users.findIndex((user) => user.id === idMember);
 
     if(indexFamily !== -1){
@@ -111,7 +113,7 @@ const addFamilyMemberHandler = (request, h) => {
         if(indexUser !== -1){
             users[indexUser] = {
                 ...users[indexUser],
-                family: id
+                family: idFamily
             }
         }else{
             const response = h.response({
@@ -149,10 +151,10 @@ const addFamilyMemberHandler = (request, h) => {
 }
 
 const deleteFamilyMemberHandler = (request, h) => {
-    const { id } = request.params;
+    const { idFamily } = request.params;
     const { idMember } = request.payload;
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
 
     if(indexFamily !== -1){
         const indexMember = families.at(indexFamily).members.findIndex((member) => member.id === idMember);
@@ -182,9 +184,9 @@ const deleteFamilyMemberHandler = (request, h) => {
 }
 
 const deleteFamilyHandler = (request, h) => {
-    const { id } = request.params;
+    const { idFamily } = request.params;
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
 
     if(indexFamily !== -1){
         families.splice(indexFamily, 1);

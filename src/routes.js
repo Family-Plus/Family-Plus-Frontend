@@ -8,6 +8,10 @@ const {
 } = require('./handler/family');
 
 const { 
+    addRewardsHandler, deleteRewardsHandler 
+} = require('./handler/rewards');
+
+const { 
     addNotesHandler, 
     takeNotesHandler, 
     doneNotesHandler,
@@ -54,47 +58,57 @@ const routes = [
     },
     {
         method: "GET",
-        path: "/family/{id}",
+        path: "/family/{idFamily}",
         handler: getSpesificFamilyHandler
     },
     {
         method: "DELETE",
-        path: "/family/{id}",
+        path: "/family/{idFamily}",
         handler: deleteFamilyHandler
     },
     {
         method: "POST",
-        path: "/family/{id}/members",
+        path: "/family/{idFamily}/members",
         handler: addFamilyMemberHandler
     },
     {
         method: "DELETE",
-        path: "/family/{id}/members",
+        path: "/family/{idFamily}/members",
         handler: deleteFamilyMemberHandler
     },
     {
         method: "POST",
-        path: "/family/{id}/notes",
+        path: "/family/{idFamily}/notes",
         handler: addNotesHandler
     },
     {
         method: "POST",
-        path: "/family/{id}/rewards",
-        handler: 
+        path: "/family/{idFamily}/rewards",
+        handler: addRewardsHandler
     },
     {
         method: "GET",
-        path: "/family/{id}/notes/{idNotes}",
+        path: "/family/{idFamily}/rewards",
+        handler: getAllFamilyHandler
+    },
+    {
+        method: "DELETE",
+        path: "/family/{idFamily}/rewards/{idReward}",
+        handler: deleteRewardsHandler
+    },
+    {
+        method: "GET",
+        path: "/family/{idFamily}/notes/{idNotes}",
         handler: getNotesHandler
     },
     {
         method: "POST",
-        path: "/family/{id}/notes/{idNotes}",
+        path: "/family/{idFamily}/notes/{idNotes}",
         handler: takeNotesHandler
     },
     {
         method: "PUT",
-        path: "/family/{id}/notes/{idNotes}",
+        path: "/family/{idFamily}/notes/{idNotes}",
         handler: doneNotesHandler
     },
 ];

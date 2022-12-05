@@ -2,7 +2,7 @@ const { families, users } = require('../properties');
 const { nanoid } = require('nanoid');
 
 const addNotesHandler = (request, h) => {
-    const { id } = request.params;
+    const { idFamily } = request.params;
     const { title, description, points, idUser } = request.payload;
     const idNote = nanoid(16);
     const status = 'assigned';
@@ -54,7 +54,7 @@ const addNotesHandler = (request, h) => {
         }
     }
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
 
     if (indexFamily !== -1){
         if(checkTitle() && checkDesc() && checkPoints()){
@@ -103,7 +103,7 @@ const addNotesHandler = (request, h) => {
 }
 
 const takeNotesHandler = (request, h) => {
-    const { id, idNotes } = request.params;
+    const { idFamily, idNotes } = request.params;
     const { idMember } = request.payload;
 
     const newAssigner = {
@@ -114,7 +114,7 @@ const takeNotesHandler = (request, h) => {
         idNotes
     }
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
 
     const indexUser = users.findIndex((user) => user.id === idMember);
 
@@ -159,10 +159,10 @@ const takeNotesHandler = (request, h) => {
 }
 
 const doneNotesHandler = (request, h)=> {
-    const { id, idNotes } = request.params;
+    const { idFamily, idNotes } = request.params;
     const { idUser } = request.payload;
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
 
     const selectedNote = families.at(indexFamily).notes.findIndex((note) => note.id === idNotes && note.idUser === idUser);
 
@@ -201,10 +201,10 @@ const doneNotesHandler = (request, h)=> {
 }
 
 const getNotesHandler = (request, h) => {
-    const { id } = request.params;
+    const { idFamily } = request.params;
     const { status } = request.query;
 
-    const indexFamily = families.findIndex((family) => family.id === id);
+    const indexFamily = families.findIndex((family) => family.id === idFamily);
     
 
     if(status !== undefined){
