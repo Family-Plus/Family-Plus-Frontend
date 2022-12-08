@@ -1,4 +1,4 @@
-import 'package:family_plus/screen/login/login.dart';
+import 'package:family_plus/screen/splash_screen.dart';
 import 'package:family_plus/utils/our_theme.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: OurTheme().buildTheme(),
-      home: OurLogin(),
+      home: SplashScreen(),
     );
   }
 }
