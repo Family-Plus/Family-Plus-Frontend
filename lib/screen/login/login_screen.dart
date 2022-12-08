@@ -1,6 +1,8 @@
 import 'package:family_plus/screen/nav_screen.dart';
+import 'package:family_plus/states/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,7 +12,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   bool obscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
 
                 //TF EMAIL
-                const TextField(
+                TextField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
                   cursorColor: Colors.black,
@@ -64,6 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 //TF PASSWORD
                 TextField(
+                  controller: _passwordController,
                   obscureText: obscureText,
                   autocorrect: false,
                   cursorColor: Colors.black,
@@ -124,12 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => const NavScreen(),
-                      ),
-                    );
+                    _loginUser(_emailController.text, _passwordController.text, context);
                   },
                 ),
                 const SizedBox(height: 16),
@@ -240,5 +244,29 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void _loginUser(String email, String password, BuildContext context) async {
+    CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+
+    try {
+      String _returnString = await _currentUser.loginWithEmail(email, password);
+      if (_returnString == 'succes') {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => NavScreen(),
+          ),
+        );
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_returnString),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

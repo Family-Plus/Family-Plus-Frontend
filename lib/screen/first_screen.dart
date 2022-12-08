@@ -1,4 +1,6 @@
+import 'package:family_plus/screen/login/login_screen.dart';
 import 'package:family_plus/screen/signup/signup_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -146,13 +148,20 @@ class _FirstScreenState extends State<FirstScreen> {
             //LOGIN
             RichText(
               textAlign: TextAlign.center,
-              text: const TextSpan(
+              text: TextSpan(
                 text: 'Already have an account? ',
                 style: TextStyle(
                   color: Colors.white,
                 ),
                 children: [
                   TextSpan(
+                    recognizer: TapGestureRecognizer()..onTap = (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ),
+                      );
+                    },
                     text: 'Login',
                     style: TextStyle(
                       decoration: TextDecoration.underline,
