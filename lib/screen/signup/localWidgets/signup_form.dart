@@ -56,13 +56,13 @@ class _OurSignUpFormState extends State<OurSignUpForm> {
                 hintText: 'Confirm Password'),
           ),
           SizedBox(height: 20.0),
-          RaisedButton(
+          ElevatedButton(
             onPressed: () {
               if (_passwordController.text == _confirmPasswordController.text) {
                 _signUpUser(
                     _emailController.text, _passwordController.text, context);
               } else {
-                Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text("Pasword tidak sama !"),
                     duration: Duration(seconds: 2),
@@ -70,7 +70,6 @@ class _OurSignUpFormState extends State<OurSignUpForm> {
                 );
               }
             },
-            padding: EdgeInsets.symmetric(horizontal: 100),
             child: Text(
               'Sign Up',
               style: TextStyle(
@@ -87,8 +86,16 @@ class _OurSignUpFormState extends State<OurSignUpForm> {
   void _signUpUser(String email, String password, BuildContext context) async {
     CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
     try {
-      if (await _currentUser.signUpUser(email, password)) {
+      String _returnString = await _currentUser.signUpUser(email, password);
+      if (_returnString == 'succes') {
         Navigator.pop(context);
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_returnString),
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
     } catch (e) {
       print(e);

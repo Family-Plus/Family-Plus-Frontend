@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class CurrentUser extends ChangeNotifier{
+class CurrentUser extends ChangeNotifier {
   late String _uid;
   late String _email;
 
@@ -12,14 +13,14 @@ class CurrentUser extends ChangeNotifier{
 
   FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<bool> signUpUser(String email, String password) async {
-    bool retval = false;
+  Future<String> onStartUp() async {
+    String retval = 'error';
 
     try{
-      UserCredential _authResult = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      if(_authResult.user != null){
-        retval = true;
-      }
+      User? _firebaseUser = await _auth.currentUser;
+      _uid = _firebaseUser!.uid;
+      _email = _firebaseUser.email!;
+      retval = 'succes';
     }catch(e){
       print(e);
     }
@@ -27,20 +28,69 @@ class CurrentUser extends ChangeNotifier{
     return retval;
   }
 
-  Future<bool> logInUser(String email, String password) async {
-    bool retval = false;
+  Future<String> signOut() async {
+    String retVal = "error";
 
-    try{
-      UserCredential _authResult = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      if(_authResult.user != null){
-        _uid = _authResult.user!.uid;
-        _email = _authResult.user!.email!;
-        retval = true;
-      }
-    }catch(e){
+    try {
+      await _auth.signOut();
+      retVal = "success";
+    } catch (e) {
       print(e);
+    }
+    return retVal;
+  }
+
+  Future<String> signUpUser(String email, String password) async {
+    String retval = 'error';
+
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
+      retval = 'succes';
+    } catch (e) {
+      retval = e.toString();
     }
 
     return retval;
   }
+
+  Future<String> loginWithEmail(String email, String password) async {
+    String retval = 'error';
+
+    try {
+      _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      retval = 'succes';
+    } on FirebaseAuthException catch (e) {
+      retval = e.message!;
+    }
+
+    return retval;
+  }
+
+  Future<String> loginWithGoogle() async {
+    String retval = 'error';
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+    try {
+      GoogleSignInAccount? _googleUser = await _googleSignIn.signIn();
+      GoogleSignInAuthentication _googleAuth = await _googleUser!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+          idToken: _googleAuth.idToken, accessToken: _googleAuth.accessToken);
+      _auth.signInWithCredential(credential);
+
+      retval = 'succes';
+    } on FirebaseAuthException catch (e) {
+      retval = e.message!;
+    }
+
+    return retval;
+  }
+
+
 }
