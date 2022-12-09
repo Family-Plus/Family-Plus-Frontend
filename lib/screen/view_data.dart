@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ViewDataPage extends StatefulWidget {
-  const ViewDataPage({Key? key, required this.document, required this.id}) : super(key: key);
+  const ViewDataPage({Key? key, required this.document, required this.id})
+      : super(key: key);
 
   final Map<String, dynamic> document;
   final String id;
@@ -60,13 +61,31 @@ class _ViewDataPageState extends State<ViewDataPage> {
                     },
                     icon: Icon(Icons.arrow_back, color: Colors.white, size: 20),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isEdit = !isEdit;
-                      });
-                    },
-                    icon: Icon(Icons.edit_rounded, color: isEdit ? Colors.green : Colors.white, size: 20),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("Todo")
+                              .doc(widget.id)
+                              .delete()
+                              .then((value) => {
+                                Navigator.pop(context)
+                              });
+                        },
+                        icon: Icon(Icons.delete, color: Colors.red, size: 20),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isEdit = !isEdit;
+                          });
+                        },
+                        icon: Icon(Icons.edit_rounded,
+                            color: isEdit ? Colors.green : Colors.white,
+                            size: 20),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -212,11 +231,13 @@ class _ViewDataPageState extends State<ViewDataPage> {
 
   Widget taskSelect(String label, int color) {
     return InkWell(
-      onTap: isEdit ? () {
-        setState(() {
-          type = label;
-        });
-      } : null,
+      onTap: isEdit
+          ? () {
+              setState(() {
+                type = label;
+              });
+            }
+          : null,
       child: Chip(
         backgroundColor: type == label ? Colors.white : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -234,12 +255,14 @@ class _ViewDataPageState extends State<ViewDataPage> {
 
   Widget categorySelect(String label, int color) {
     return InkWell(
-      onTap: isEdit ? () {
-        setState(() {
-          category = label;
-          print(category);
-        });
-      } : null,
+      onTap: isEdit
+          ? () {
+              setState(() {
+                category = label;
+                print(category);
+              });
+            }
+          : null,
       child: Chip(
         backgroundColor: category == label ? Colors.white : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

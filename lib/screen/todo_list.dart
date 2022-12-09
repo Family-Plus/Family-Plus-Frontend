@@ -13,6 +13,7 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
   final Stream<QuerySnapshot> _stream =
       FirebaseFirestore.instance.collection("Todo").snapshots();
+  List<Select> selected = [];
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,17 @@ class _TodoListState extends State<TodoList> {
             color: Colors.white,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+
+            },
+            icon: Icon(Icons.delete, color: Colors.red, size: 20),
+          ),
+
+        ],
       ),
+
       body: StreamBuilder<QuerySnapshot>(
           stream: _stream,
           builder: (context, snapshot) {
@@ -69,6 +80,8 @@ class _TodoListState extends State<TodoList> {
                     iconColor = Colors.red;
                 }
 
+                selected.add(Select(id: snapshot.data!.docs[index].id, checkValue: false));
+                
                 return InkWell(
                   onTap: () {
                     Navigator.push(
@@ -85,11 +98,13 @@ class _TodoListState extends State<TodoList> {
                     title: document["title"] == null
                         ? "Judul Kosong"
                         : document["title"],
-                    check: true,
+                    check: selected[index].checkValue,
                     iconBgColor: Colors.white,
                     iconColor: iconColor,
                     iconData: iconData,
                     time: "5 Am",
+                    index: index,
+                    onChange: onChange,
                   ),
                 );
               },
@@ -97,4 +112,19 @@ class _TodoListState extends State<TodoList> {
           }),
     );
   }
+
+  void onChange(int index){
+    setState(() {
+      selected[index].checkValue = !selected[index].checkValue;
+    });
+  }
+
 }
+
+class Select{
+  String id;
+  bool checkValue = false;
+  Select({required this.id, required this.checkValue});
+}
+
+
