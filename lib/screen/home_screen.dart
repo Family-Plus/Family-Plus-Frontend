@@ -1,4 +1,5 @@
 import 'package:family_plus/screen/create_group.dart';
+import 'package:family_plus/screen/join_group.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -152,7 +153,12 @@ class HomeScreen extends StatelessWidget {
 
                   //JOIN GROUP
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (builder) => JoinGroup()
+                      ),
+                    );},
                     child: Container(
                       width: MediaQuery.of(context).size.width / 2.3,
                       padding: const EdgeInsets.all(32),

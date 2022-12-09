@@ -1,6 +1,7 @@
 import 'package:family_plus/models/user_model.dart';
 import 'package:family_plus/services/db_future.dart';
 import 'package:family_plus/states/current_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,8 +15,10 @@ class JoinGroup extends StatefulWidget {
 
 class _JoinGroupState extends State<JoinGroup> {
   void _joinGroup(BuildContext context, String groupId) async {
-    CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
-    String _returnString = await DBFuture().joinGroup(groupId, _currentUser.getCurrentUser.uid);
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid = _auth.currentUser!.uid;
+    // CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+    String _returnString = await DBFuture().joinGroup(groupId, uid);
     if (_returnString == "success") {
       Navigator.pop(context);
     } else {
