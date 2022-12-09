@@ -1,3 +1,4 @@
+import 'package:family_plus/screen/create_group.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -109,7 +110,14 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   //CREATE GROUP
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (builder) => CreateGroup()
+                        ),
+                      );
+                    },
                     child: Container(
                       width: MediaQuery.of(context).size.width / 2.3,
                       padding: const EdgeInsets.all(32),
