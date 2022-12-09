@@ -1,6 +1,7 @@
+import 'package:family_plus/screen/add_todo.dart';
 import 'package:family_plus/screen/home_screen.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
-import 'package:family_plus/screen/profil_screen.dart';
+import 'package:family_plus/screen/todo_list.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/matescreen/rial.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -23,10 +24,10 @@ class _NavScreenState extends State<NavScreen> {
         context,
         screens: const [
           HomeScreen(),
-          ProfileScreen(),
-          ProfileScreen(),
-          ProfileScreen(),
-          ProfileScreen(),
+          TodoList(),
+          AddTodoPage(),
+          TodoList(),
+          TodoList(),
         ],
         items: [
           PersistentBottomNavBarItem(
