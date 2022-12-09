@@ -1,18 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class AddTodoPage extends StatefulWidget {
-  const AddTodoPage({Key? key}) : super(key: key);
+class ViewDataPage extends StatefulWidget {
+  const ViewDataPage({Key? key, required this.document, required this.id}) : super(key: key);
+
+  final Map<String, dynamic> document;
+  final String id;
 
   @override
-  State<AddTodoPage> createState() => _AddTodoPageState();
+  State<ViewDataPage> createState() => _ViewDataPageState();
 }
 
-class _AddTodoPageState extends State<AddTodoPage> {
-  TextEditingController titleController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  String type ="";
-  String category = "";
+class _ViewDataPageState extends State<ViewDataPage> {
+  late TextEditingController titleController;
+  late TextEditingController descriptionController;
+  late String type;
+  late String category;
+  bool isEdit = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    String title = widget.document["title"] == null
+        ? "Judul Kosong"
+        : widget.document["title"];
+    titleController = TextEditingController(text: title);
+
+    String description = widget.document["description"] == null
+        ? "No Description"
+        : widget.document["description"];
+    descriptionController = TextEditingController(text: description);
+
+    type = widget.document["task"] ?? "Important";
+    category = widget.document["category"] ?? "Food";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +44,32 @@ class _AddTodoPageState extends State<AddTodoPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient:
-              LinearGradient(colors: [
-                Color(0xff1d1e26),
-                Color(0xff252041)]),
+              LinearGradient(colors: [Color(0xff1d1e26), Color(0xff252041)]),
         ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isEdit = !isEdit;
+                      });
+                    },
+                    icon: Icon(Icons.edit_rounded, color: isEdit ? Colors.green : Colors.white, size: 20),
+                  ),
+                ],
+              ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
@@ -38,7 +77,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Create",
+                      isEdit ? "Editing" : "View",
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.white,
@@ -48,7 +87,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "New Todo",
+                      "Your Todo",
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.white,
@@ -104,7 +143,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     SizedBox(
                       height: 50,
                     ),
-                    button(context),
+                    isEdit ? button(context) : Container(),
                     SizedBox(height: 30),
                   ],
                 ),
@@ -118,10 +157,14 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   Widget button(context) {
     return InkWell(
-      onTap: (){
-        FirebaseFirestore.instance.collection("Todo").add({
-          "title" : titleController.text, "task" : type, "category" : category, "description" : descriptionController.text
+      onTap: () {
+        FirebaseFirestore.instance.collection("Todo").doc(widget.id).update({
+          "title": titleController.text,
+          "task": type,
+          "category": category,
+          "description": descriptionController.text
         });
+        Navigator.pop(context);
       },
       child: Container(
         height: 56,
@@ -133,7 +176,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
               Color(0xff8ad32f9),
             ])),
         child: Center(
-          child: Text("Add Todo",
+          child: Text("Update Todo",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -150,6 +193,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       decoration: BoxDecoration(
           color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
+        enabled: isEdit,
         controller: descriptionController,
         maxLines: null,
         style: TextStyle(color: Colors.grey, fontSize: 17),
@@ -168,18 +212,20 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   Widget taskSelect(String label, int color) {
     return InkWell(
-      onTap: (){
+      onTap: isEdit ? () {
         setState(() {
           type = label;
         });
-      },
+      } : null,
       child: Chip(
         backgroundColor: type == label ? Colors.white : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         label: Text(
           label,
           style: TextStyle(
-              color: type == label ? Colors.black : Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+              color: type == label ? Colors.black : Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w600),
         ),
         labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
@@ -188,19 +234,21 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   Widget categorySelect(String label, int color) {
     return InkWell(
-      onTap: (){
+      onTap: isEdit ? () {
         setState(() {
           category = label;
           print(category);
         });
-      },
+      } : null,
       child: Chip(
         backgroundColor: category == label ? Colors.white : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         label: Text(
           label,
           style: TextStyle(
-              color: category == label ? Colors.black : Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+              color: category == label ? Colors.black : Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w600),
         ),
         labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
@@ -214,6 +262,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       decoration: BoxDecoration(
           color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
+        enabled: isEdit,
         controller: titleController,
         style: TextStyle(color: Colors.grey, fontSize: 17),
         decoration: InputDecoration(

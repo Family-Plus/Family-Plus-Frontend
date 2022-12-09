@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:family_plus/screen/view_data.dart';
 import 'package:family_plus/widgets/todo_card.dart';
 import 'package:flutter/material.dart';
 
@@ -35,40 +36,52 @@ class _TodoListState extends State<TodoList> {
               return Center(child: CircularProgressIndicator());
             }
             return ListView.builder(
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  IconData iconData;
-                  Color iconColor;
-                  Map<String, dynamic> document =
-                      snapshot.data!.docs[index].data() as Map<String, dynamic>;
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                IconData iconData;
+                Color iconColor;
+                Map<String, dynamic> document =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
 
-                  switch (document["category"]) {
-                    case "Work":
-                      iconData = Icons.sports_handball_outlined;
-                      iconColor = Colors.red;
-                      break;
-                    case "Workout":
-                      iconData = Icons.people_alt_outlined;
-                      iconColor = Colors.blue;
-                      break;
-                    case "Food":
-                      iconData = Icons.fastfood_outlined;
-                      iconColor = Colors.green;
-                      break;
-                    case "Design":
-                      iconData = Icons.design_services_outlined;
-                      iconColor = Colors.teal;
-                      break;
-                    case "Run":
-                      iconData = Icons.run_circle_outlined;
-                      iconColor = Colors.yellowAccent;
-                      break;
-                    default:
-                      iconData = Icons.run_circle_outlined;
-                      iconColor = Colors.red;
-                  }
+                switch (document["category"]) {
+                  case "Work":
+                    iconData = Icons.sports_handball_outlined;
+                    iconColor = Colors.red;
+                    break;
+                  case "Workout":
+                    iconData = Icons.people_alt_outlined;
+                    iconColor = Colors.blue;
+                    break;
+                  case "Food":
+                    iconData = Icons.fastfood_outlined;
+                    iconColor = Colors.green;
+                    break;
+                  case "Design":
+                    iconData = Icons.design_services_outlined;
+                    iconColor = Colors.teal;
+                    break;
+                  case "Run":
+                    iconData = Icons.run_circle_outlined;
+                    iconColor = Colors.yellowAccent;
+                    break;
+                  default:
+                    iconData = Icons.run_circle_outlined;
+                    iconColor = Colors.red;
+                }
 
-                  return TodoCard(
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (builder) => ViewDataPage(
+                          document: document,
+                          id:  snapshot.data!.docs[index].id
+                        ),
+                      ),
+                    );
+                  },
+                  child: TodoCard(
                     title: document["title"] == null
                         ? "Judul Kosong"
                         : document["title"],
@@ -77,8 +90,10 @@ class _TodoListState extends State<TodoList> {
                     iconColor: iconColor,
                     iconData: iconData,
                     time: "5 Am",
-                  );
-                });
+                  ),
+                );
+              },
+            );
           }),
     );
   }
