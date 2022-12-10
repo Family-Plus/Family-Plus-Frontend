@@ -61,7 +61,8 @@ class CurrentUser extends ChangeNotifier {
         'fullName': fullName,
         'email': _authResult.user!.email,
         'accountCreated': Timestamp.now(),
-         'groupId' : ""
+         'groupId' : "",
+         'exp' : 0
       });
 
       retval = 'succes';
