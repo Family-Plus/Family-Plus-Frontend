@@ -21,6 +21,9 @@ class _MemberCardState extends State<MemberCard> {
     return StreamBuilder<DocumentSnapshot>(
         stream: provideDocumentFieldStream(widget.id),
         builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
           Map<String, dynamic> documentFields =
               snapshot.data!.data() as Map<String, dynamic>;
           return Container(

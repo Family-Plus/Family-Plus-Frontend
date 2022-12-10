@@ -32,6 +32,9 @@ class _LogOutPageState extends State<LogOutPage> {
           child: StreamBuilder<DocumentSnapshot>(
               stream: getUser(),
               builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
                 Map<String, dynamic> documentFields =
                     snapshot.data!.data() as Map<String, dynamic>;
                 return Column(
@@ -65,6 +68,10 @@ class _LogOutPageState extends State<LogOutPage> {
                           label("Email"),
                           SizedBox(height: 12),
                           desc(documentFields["email"]),
+                          SizedBox(height: 25),
+                          label("Current Exp"),
+                          SizedBox(height: 12),
+                          desc(documentFields["exp"].toString()),
                           SizedBox(height: 25),
                           label("Group Id"),
                           SizedBox(height: 12),

@@ -153,147 +153,156 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.account_circle,
-            color: Colors.white,
-            size: 35,
-          ),
-        ),
-        actions: [
-          IconButton(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          leading: IconButton(
             onPressed: () {},
             icon: const Icon(
-              Icons.account_balance_wallet_rounded,
+              Icons.account_circle,
               color: Colors.white,
               size: 35,
             ),
           ),
-          StreamBuilder<DocumentSnapshot>(
-              stream: provideDocumentFieldStream(),
-              builder: (context, snapshot) {
-                Map<String, dynamic> documentFields =
-                    snapshot.data!.data() as Map<String, dynamic>;
-                return Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(
-                    child: Text(
-                      documentFields["exp"].toString() == null
-                          ? "kosong"
-                          : documentFields["exp"].toString(),
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.account_balance_wallet_rounded,
+                color: Colors.white,
+                size: 35,
+              ),
+            ),
+            StreamBuilder<DocumentSnapshot>(
+                stream: provideDocumentFieldStream(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  Map<String, dynamic> documentFields =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(
+                      child: Text(
+                        documentFields["exp"].toString() ?? "kosong",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+          ],
+        ),
+        body: Container(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //GREATING
+                  Text(
+                    "Hai $username",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  //INFO BENNER
+                  Container(
+                    width: double.maxFinite,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 90,
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 32),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xFFFAD2D2),
+                          Color(0xFFBCD4E6),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Nama Group : ${groupName ?? "Not In Group"}  ",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
-                );
-              }),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //GREATING
-              Text(
-                "Hai $username",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
 
-              //INFO BENNER
-              Container(
-                width: double.maxFinite,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 90,
-                ),
-                margin: const EdgeInsets.symmetric(vertical: 32),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFFAD2D2),
-                      Color(0xFFBCD4E6),
-                    ],
+                  //TITLE
+                  Text(
+                    "Join or Create Group Here",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Text(
-                    "Nama Group : $groupName",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 32),
+                    child: Center(
+                      child: Text(
+                        checkJoin
+                            ? "Already Join"
+                            : "You haven't been in the family group",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
                   ),
-                ),
+                  checkJoin
+                      ? Container(
+                          child: StreamBuilder<DocumentSnapshot>(
+                              stream: provideDocumentFieldStream(),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                Map<String, dynamic> documentFields =
+                                    snapshot.data!.data() as Map<String, dynamic>;
+                                return Padding(
+                                  padding: EdgeInsets.all(3),
+                                  child: StreamBuilder<DocumentSnapshot>(
+                                      stream: getGroup(documentFields["groupId"]),
+                                      builder: (context, AsyncSnapshot snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return Center(child: CircularProgressIndicator());
+                                        }
+                                        Map<String, dynamic> documentFields =
+                                            snapshot.data!.data()
+                                                as Map<String, dynamic>;
+                                        List<dynamic> coba =
+                                            documentFields["members"];
+                                        return ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: coba.length,
+                                          itemBuilder: (context, index) {
+                                            return  MemberCard(id: coba[index],);
+                                          },
+                                        );
+                                      }),
+                                );
+                              }),
+                        )
+                      : buildButton(context),
+                ],
               ),
-
-              //TITLE
-              Text(
-                "Join or Create Group Here",
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 32),
-                child: Center(
-                  child: Text(
-                    checkJoin
-                        ? "Already Join"
-                        : "You haven't been in the family group",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ),
-              checkJoin
-                  ? Container(
-                      child: StreamBuilder<DocumentSnapshot>(
-                          stream: provideDocumentFieldStream(),
-                          builder: (context, snapshot) {
-                            Map<String, dynamic> documentFields =
-                                snapshot.data!.data() as Map<String, dynamic>;
-                            return Padding(
-                              padding: EdgeInsets.all(3),
-                              child: StreamBuilder<DocumentSnapshot>(
-                                  stream: getGroup(documentFields["groupId"]),
-                                  builder: (context, AsyncSnapshot snapshot) {
-                                    Map<String, dynamic> documentFields =
-                                        snapshot.data!.data()
-                                            as Map<String, dynamic>;
-                                    List<dynamic> coba =
-                                        documentFields["members"];
-                                    return ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: coba.length,
-                                      itemBuilder: (context, index) {
-                                        return  MemberCard(id: coba[index],);
-                                      },
-                                    );
-                                  }),
-                            );
-                          }),
-                    )
-                  : buildButton(context),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   Row buildButton(BuildContext context) {

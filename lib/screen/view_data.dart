@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ViewDataPage extends StatefulWidget {
@@ -38,6 +39,12 @@ class _ViewDataPageState extends State<ViewDataPage> {
     category = widget.document["category"] ?? "Food";
   }
 
+  Stream<DocumentSnapshot> getUser() {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid = _auth.currentUser!.uid;
+    return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,18 +71,30 @@ class _ViewDataPageState extends State<ViewDataPage> {
                   ),
                   Row(
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection("Todo")
-                              .doc(widget.id)
-                              .delete()
-                              .then((value) => {
-                                Navigator.pop(context)
-                              });
-                        },
-                        icon: Icon(Icons.delete, color: Colors.red, size: 20),
-                      ),
+                      StreamBuilder<DocumentSnapshot>(
+                          stream: getUser(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+
+                            Map<String, dynamic> documentFields =
+                                snapshot.data!.data() as Map<String, dynamic>;
+
+                            return IconButton(
+                              onPressed: () {
+                                FirebaseFirestore.instance
+                                    .collection("groups")
+                                    .doc(documentFields["groupId"])
+                                    .collection("todo")
+                                    .doc(widget.id)
+                                    .delete()
+                                    .then((value) => {Navigator.pop(context)});
+                              },
+                              icon: Icon(Icons.delete,
+                                  color: Colors.red, size: 20),
+                            );
+                          }),
                       IconButton(
                         onPressed: () {
                           setState(() {
@@ -176,35 +195,65 @@ class _ViewDataPageState extends State<ViewDataPage> {
   }
 
   Widget button(context) {
-    return InkWell(
-      onTap: () {
-        FirebaseFirestore.instance.collection("Todo").doc(widget.id).update({
-          "title": titleController.text,
-          "task": type,
-          "category": category,
-          "description": descriptionController.text,
-          "number" : value
+    return StreamBuilder<DocumentSnapshot>(
+        stream: getUser(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          Map<String, dynamic> documentFields =
+              snapshot.data!.data() as Map<String, dynamic>;
+
+          return InkWell(
+            onTap: () {
+              // FirebaseFirestore.instance.collection("Todo").doc(widget.id).update({
+              //   "title": titleController.text,
+              //   "task": type,
+              //   "category": category,
+              //   "description": descriptionController.text,
+              //   "number" : value
+              // });
+
+              FirebaseFirestore.instance
+                  .collection("groups")
+                  .doc(documentFields["groupId"])
+                  .collection("todo")
+                  .doc(widget.id)
+                  .update({
+                "title": titleController.text,
+                "task": type,
+                "category": category,
+                "description": descriptionController.text,
+                "number": value
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Succes Add Todo"),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+
+              Navigator.pop(context);
+            },
+            child: Container(
+              height: 56,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(colors: [
+                    Color(0xff8a32f1),
+                    Color(0xff8ad32f9),
+                  ])),
+              child: Center(
+                child: Text("Update Todo",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          );
         });
-        Navigator.pop(context);
-      },
-      child: Container(
-        height: 56,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(colors: [
-              Color(0xff8a32f1),
-              Color(0xff8ad32f9),
-            ])),
-        child: Center(
-          child: Text("Update Todo",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600)),
-        ),
-      ),
-    );
   }
 
   Widget description(context) {

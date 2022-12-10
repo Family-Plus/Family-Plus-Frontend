@@ -80,27 +80,38 @@ class _RewardCardState extends State<RewardCard> {
                       child: StreamBuilder<DocumentSnapshot>(
                           stream: getUser(),
                           builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            }
                             Map<String, dynamic> documentFields =
                                 snapshot.data!.data() as Map<String, dynamic>;
                             return ElevatedButton(
-                              onPressed: () {
-                                if(documentFields["exp"] >= widget.value){
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Succes Claim"),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }else{
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text("Point Tidak Cukup"),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              },
+                              onPressed: documentFields["exp"] >= widget.value
+                                  ? () {
+                                      if (documentFields["exp"] >=
+                                          widget.value) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text("Succes Claim"),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text("Point Tidak Cukup"),
+                                            duration: Duration(seconds: 2),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  : null,
                               child: Text("Claim"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.purple,
+                              ),
                             );
                           }),
                     ),

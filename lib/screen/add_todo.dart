@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AddTodoPage extends StatefulWidget {
@@ -11,10 +12,16 @@ class AddTodoPage extends StatefulWidget {
 class _AddTodoPageState extends State<AddTodoPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  String type ="";
+  String type = "";
   String category = "";
 
   int value = 0;
+
+  Stream<DocumentSnapshot> getUser() {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid = _auth.currentUser!.uid;
+    return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +31,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient:
-              LinearGradient(colors: [
-                Color(0xff1d1e26),
-                Color(0xff252041)]),
+              LinearGradient(colors: [Color(0xff1d1e26), Color(0xff252041)]),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -119,36 +124,61 @@ class _AddTodoPageState extends State<AddTodoPage> {
   }
 
   Widget button(context) {
-    return InkWell(
-      onTap: (){
-        FirebaseFirestore.instance.collection("Todo").add({
-          "title" : titleController.text, "task" : type, "category" : category, "description" : descriptionController.text, "number" : value
+    return StreamBuilder<DocumentSnapshot>(
+        stream: getUser(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          Map<String, dynamic> documentFields =
+              snapshot.data!.data() as Map<String, dynamic>;
+          return InkWell(
+            onTap: () {
+              FirebaseFirestore.instance.collection("Todo").add({
+                "title": titleController.text,
+                "task": type,
+                "category": category,
+                "description": descriptionController.text,
+                "number": value
+              });
+
+              FirebaseFirestore.instance
+                  .collection("groups")
+                  .doc(documentFields["groupId"])
+                  .collection("todo")
+                  .add({
+                "title": titleController.text,
+                "task": type,
+                "category": category,
+                "description": descriptionController.text,
+                "number": value
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Succes Add Todo"),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Container(
+              height: 56,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(colors: [
+                    Color(0xff8a32f1),
+                    Color(0xff8ad32f9),
+                  ])),
+              child: Center(
+                child: Text("Add Todo",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          );
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Succes Add Todo"),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      },
-      child: Container(
-        height: 56,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(colors: [
-              Color(0xff8a32f1),
-              Color(0xff8ad32f9),
-            ])),
-        child: Center(
-          child: Text("Add Todo",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600)),
-        ),
-      ),
-    );
   }
 
   Widget description(context) {
@@ -176,7 +206,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   Widget taskSelect(String label, int color, int number) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         setState(() {
           type = label;
           value = number;
@@ -189,7 +219,9 @@ class _AddTodoPageState extends State<AddTodoPage> {
         label: Text(
           label,
           style: TextStyle(
-              color: type == label ? Colors.black : Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+              color: type == label ? Colors.black : Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w600),
         ),
         labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
@@ -198,7 +230,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
 
   Widget categorySelect(String label, int color) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         setState(() {
           category = label;
           print(category);
@@ -210,7 +242,9 @@ class _AddTodoPageState extends State<AddTodoPage> {
         label: Text(
           label,
           style: TextStyle(
-              color: category == label ? Colors.black : Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+              color: category == label ? Colors.black : Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w600),
         ),
         labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
