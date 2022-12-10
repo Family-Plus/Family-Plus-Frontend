@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class TodoCard extends StatelessWidget {
+class TodoCard extends StatefulWidget {
   const TodoCard(
       {Key? key,
       required this.title,
@@ -10,7 +12,7 @@ class TodoCard extends StatelessWidget {
       required this.check,
       required this.iconBgColor,
       required this.onChange,
-      required this.index})
+      required this.index, required this.value})
       : super(key: key);
 
   final String title;
@@ -21,9 +23,37 @@ class TodoCard extends StatelessWidget {
   final Color iconBgColor;
   final Function onChange;
   final int index;
+  final int value;
 
   @override
+  State<TodoCard> createState() => _TodoCardState();
+}
+
+class _TodoCardState extends State<TodoCard> {
+
+
+  void showDisplayName() async {
+    int exp = 0;
+    var collection = FirebaseFirestore.instance.collection('users');
+    //userUid is the current auth user
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid = _auth.currentUser!.uid;
+    var docSnapshot = await collection.doc(uid).get();
+
+    Map<String, dynamic> data = docSnapshot.data()!;
+
+
+    exp = data['exp'];
+  }
+
+  int exp = 0;
+  @override
   Widget build(BuildContext context) {
+
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid = _auth.currentUser!.uid;
+
+
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Row(
@@ -40,9 +70,28 @@ class TodoCard extends StatelessWidget {
                 ),
                 activeColor: Color(0xff6cf8a9),
                 checkColor: Color(0xff0e3e26),
-                value: check,
-                onChanged: (bool? value) {
-                  onChange(index);
+                value: widget.check,
+                onChanged: (bool? value) async {
+                  widget.onChange(widget.index);
+
+                  var collection = FirebaseFirestore.instance.collection('users');
+                  //userUid is the current auth user
+                  FirebaseAuth _auth = FirebaseAuth.instance;
+                  String uid = _auth.currentUser!.uid;
+                  var docSnapshot = await collection.doc(uid).get();
+                  Map<String, dynamic> data = docSnapshot.data()!;
+
+                  if(value == true){
+
+                    exp = data['exp'] + widget.value;
+                    print(exp);
+
+                    FirebaseFirestore.instance.collection("users").doc(uid).update({
+                      "exp" : exp,
+                    });
+                  }
+
+
                 },
               ),
             ),
@@ -62,12 +111,12 @@ class TodoCard extends StatelessWidget {
                       height: 33,
                       width: 36,
                       decoration: BoxDecoration(
-                        color: iconBgColor,
+                        color: widget.iconBgColor,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
-                        iconData,
-                        color: iconColor,
+                        widget.iconData,
+                        color: widget.iconColor,
                       ),
                     ),
                     SizedBox(
@@ -75,7 +124,7 @@ class TodoCard extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        title,
+                        widget.title,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -84,7 +133,7 @@ class TodoCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      time,
+                      "${widget.time} Xp",
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.white,

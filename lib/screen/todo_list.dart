@@ -102,9 +102,12 @@ class _TodoListState extends State<TodoList> {
                     iconBgColor: Colors.white,
                     iconColor: iconColor,
                     iconData: iconData,
-                    time: "5 Am",
+                    time:  document["number"].toString() == null
+                        ? "No Xp"
+                        : document["number"].toString(),
                     index: index,
                     onChange: onChange,
+                    value: document["number"],
                   ),
                 );
               },

@@ -13,4 +13,7 @@ class UserModel {
       required this.fullName,
       required this.accountCreated,
       required this.notifToken});
+
+
 }
+

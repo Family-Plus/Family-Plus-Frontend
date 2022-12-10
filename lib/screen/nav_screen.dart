@@ -2,6 +2,7 @@ import 'package:family_plus/screen/add_todo.dart';
 import 'package:family_plus/screen/home_screen.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
 import 'package:family_plus/screen/logout_page.dart';
+import 'package:family_plus/screen/reward_page.dart';
 import 'package:family_plus/screen/todo_list.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/matescreen/rial.dart';
@@ -27,7 +28,7 @@ class _NavScreenState extends State<NavScreen> {
           HomeScreen(),
           TodoList(),
           AddTodoPage(),
-          TodoList(),
+          RewardList(),
           LogOutPage(),
         ],
         items: [

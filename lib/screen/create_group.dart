@@ -1,4 +1,5 @@
 import 'package:family_plus/models/user_model.dart';
+import 'package:family_plus/screen/home_screen.dart';
 import 'package:family_plus/services/db_future.dart';
 import 'package:family_plus/states/current_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,10 @@ class _CreateGroupState extends State<CreateGroup> {
     print("Ini current : ${uid}");
     String _returnString = await DBFuture().createGroup(groupName, uid);
     if (_returnString == "success") {
-      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (builder) => HomeScreen()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -18,6 +18,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
   late String type;
   late String category;
   bool isEdit = false;
+  int value = 0;
 
   @override
   void initState() {
@@ -119,15 +120,15 @@ class _ViewDataPageState extends State<ViewDataPage> {
                     SizedBox(height: 12),
                     title(context),
                     SizedBox(height: 30),
-                    label("Task Type"),
+                    label("Task Point"),
                     SizedBox(height: 12),
                     Row(
                       children: [
-                        taskSelect("Important", 0xff2664fa),
+                        taskSelect("250 Xp", 0xff2664fa, 250),
                         SizedBox(
                           width: 20,
                         ),
-                        taskSelect("Planned", 0xff2bc8d9),
+                        taskSelect("500 Xp", 0xff2bc8d9, 500),
                       ],
                     ),
                     SizedBox(height: 25),
@@ -181,7 +182,8 @@ class _ViewDataPageState extends State<ViewDataPage> {
           "title": titleController.text,
           "task": type,
           "category": category,
-          "description": descriptionController.text
+          "description": descriptionController.text,
+          "number" : value
         });
         Navigator.pop(context);
       },
@@ -229,12 +231,13 @@ class _ViewDataPageState extends State<ViewDataPage> {
     );
   }
 
-  Widget taskSelect(String label, int color) {
+  Widget taskSelect(String label, int color, int number) {
     return InkWell(
       onTap: isEdit
           ? () {
               setState(() {
                 type = label;
+                value = number;
               });
             }
           : null,

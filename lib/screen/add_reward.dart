@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class AddTodoPage extends StatefulWidget {
-  const AddTodoPage({Key? key}) : super(key: key);
+class AddReward extends StatefulWidget {
+  const AddReward({Key? key}) : super(key: key);
 
   @override
-  State<AddTodoPage> createState() => _AddTodoPageState();
+  State<AddReward> createState() => _AddRewardState();
 }
 
-class _AddTodoPageState extends State<AddTodoPage> {
+class _AddRewardState extends State<AddReward> {
+
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   String type ="";
@@ -24,18 +25,25 @@ class _AddTodoPageState extends State<AddTodoPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           gradient:
-              LinearGradient(colors: [
-                Color(0xff1d1e26),
-                Color(0xff252041)]),
+          LinearGradient(colors: [
+            Color(0xff1d1e26),
+            Color(0xff252041)]),
         ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 30),
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+              ),
+              SizedBox(height: 30),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -50,7 +58,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "New Todo",
+                      "Your Reward",
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.white,
@@ -59,50 +67,22 @@ class _AddTodoPageState extends State<AddTodoPage> {
                       ),
                     ),
                     SizedBox(height: 25),
-                    label("Task Title"),
+                    label("Reward Title"),
                     SizedBox(height: 12),
                     title(context),
                     SizedBox(height: 30),
-                    label("Task Point"),
+                    label("Exp Requirement"),
                     SizedBox(height: 12),
                     Row(
                       children: [
-                        taskSelect("250 Xp", 0xff2664fa, 250),
+                        taskSelect("5000 Xp", 0xff2664fa, 5000),
                         SizedBox(
                           width: 20,
                         ),
-                        taskSelect("500 Xp", 0xff2bc8d9, 500),
+                        taskSelect("10000 Xp", 0xff2bc8d9, 10000),
                       ],
                     ),
                     SizedBox(height: 25),
-                    label("Description"),
-                    SizedBox(height: 12),
-                    description(context),
-                    SizedBox(height: 25),
-                    label("Category"),
-                    SizedBox(height: 12),
-                    Wrap(
-                      runSpacing: 10,
-                      children: [
-                        categorySelect("Food", 0xffff6d6e),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        categorySelect("Workout", 0xfff29732),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        categorySelect("Work", 0xff6557ff),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        categorySelect("Design", 0xff234ebd),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        categorySelect("Run", 0xff2bc8d9),
-                      ],
-                    ),
                     SizedBox(
                       height: 50,
                     ),
@@ -121,16 +101,18 @@ class _AddTodoPageState extends State<AddTodoPage> {
   Widget button(context) {
     return InkWell(
       onTap: (){
-        FirebaseFirestore.instance.collection("Todo").add({
-          "title" : titleController.text, "task" : type, "category" : category, "description" : descriptionController.text, "number" : value
+        FirebaseFirestore.instance.collection("reward").add({
+          "title" : titleController.text, "number" : value
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Succes Add Todo"),
+            content: Text("Succes Add Reward"),
             duration: Duration(seconds: 2),
           ),
         );
+        Navigator.pop(context);
       },
+
       child: Container(
         height: 56,
         width: MediaQuery.of(context).size.width,
@@ -141,7 +123,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
               Color(0xff8ad32f9),
             ])),
         child: Center(
-          child: Text("Add Todo",
+          child: Text("Add Reward",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -228,7 +210,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
         style: TextStyle(color: Colors.grey, fontSize: 17),
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: "Task Title",
+          hintText: "Reward Title",
           hintStyle: TextStyle(
             color: Colors.grey,
             fontSize: 17,
