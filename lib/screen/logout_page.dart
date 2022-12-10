@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
+import 'package:family_plus/services/auth_state_changes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -162,7 +163,23 @@ class _LogOutPageState extends State<LogOutPage> {
 
   Widget button(context) {
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        String _returnString = await signOut();
+        if(_returnString == "success"){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (builder) => AuthChanges()),
+          );
+        }else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(_returnString),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+
+      },
       child: Container(
         height: 56,
         width: MediaQuery.of(context).size.width,

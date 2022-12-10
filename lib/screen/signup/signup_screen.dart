@@ -12,12 +12,12 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
   TextEditingController _fullNameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
   bool obscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -149,9 +149,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   onPressed: () {
-                    _signUpUser(
-                        _emailController.text, _passwordController.text, context, _fullNameController.text);
-
+                    _signUpUser(_emailController.text, _passwordController.text,
+                        context, _fullNameController.text);
 
                     Navigator.push(
                       context,
@@ -251,7 +250,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (builder) => LoginScreen()),
+                        );
+                      },
                       child: const Text(
                         "Login ",
                         style: TextStyle(
@@ -271,10 +276,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  void _signUpUser(String email, String password, BuildContext context, String fullName) async {
+  void _signUpUser(String email, String password, BuildContext context,
+      String fullName) async {
     CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
     try {
-      String _returnString = await _currentUser.signUpUser(email, password, fullName);
+      String _returnString =
+          await _currentUser.signUpUser(email, password, fullName);
       if (_returnString == 'succes') {
         Navigator.push(
           context,
@@ -282,7 +289,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             builder: (BuildContext context) => const LoginScreen(),
           ),
         );
-      }else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_returnString),
@@ -294,5 +301,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       print(e);
     }
   }
-
 }

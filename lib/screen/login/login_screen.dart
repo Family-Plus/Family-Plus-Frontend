@@ -1,5 +1,7 @@
+import 'package:family_plus/screen/home_screen.dart';
 import 'package:family_plus/screen/nav_screen.dart';
 import 'package:family_plus/screen/signup/signup_screen.dart';
+import 'package:family_plus/services/auth_state_changes.dart';
 import 'package:family_plus/states/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -262,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_returnString == 'succes') {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => NavScreen(),
+            builder: (context) => AuthChanges(),
           ),
         );
       }else{
