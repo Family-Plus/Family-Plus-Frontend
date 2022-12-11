@@ -12,7 +12,15 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
+
   Stream<QuerySnapshot> getGroup(String uid) {
+    if(uid == null || uid == ""){
+      return FirebaseFirestore.instance
+          .collection("groups")
+          .doc("uid")
+          .collection("todo")
+          .snapshots();
+    }
     return FirebaseFirestore.instance
         .collection("groups")
         .doc(uid)
@@ -44,12 +52,6 @@ class _TodoListState extends State<TodoList> {
             color: Colors.white,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.delete, color: Colors.red, size: 20),
-          ),
-        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: getUser(),
@@ -112,16 +114,16 @@ class _TodoListState extends State<TodoList> {
                             MaterialPageRoute(
                               builder: (builder) => ViewDataPage(
                                   document: document,
-                                  id: snapshot.data!.docs[index].id),
+                                  id: snapshot.data!.docs[index].id ?? ""),
                             ),
                           );
                         },
                         child: TodoCard(
-                          id: snapshot.data!.docs[index].id,
+                          id: snapshot.data!.docs[index].id ?? "",
                           title: document["title"] == null
                               ? "Judul Kosong"
                               : document["title"],
-                          check: selected[index].checkValue,
+                          check:  document["checkValue"],
                           iconBgColor: Colors.white,
                           iconColor: iconColor,
                           iconData: iconData,

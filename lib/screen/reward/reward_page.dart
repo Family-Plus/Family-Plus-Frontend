@@ -22,11 +22,19 @@ class _RewardListState extends State<RewardList> {
   }
 
   Stream<QuerySnapshot> getGroup(String uid) {
+    if(uid == ""){
+      return FirebaseFirestore.instance
+          .collection("groups")
+          .doc("uid")
+          .collection("rewards")
+          .snapshots();
+    }
     return FirebaseFirestore.instance
         .collection("groups")
         .doc(uid)
         .collection("rewards")
         .snapshots();
+
   }
 
 

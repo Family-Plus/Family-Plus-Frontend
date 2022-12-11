@@ -12,6 +12,13 @@ class RewardHistory extends StatefulWidget {
 
 class _RewardHistoryState extends State<RewardHistory> {
   Stream<QuerySnapshot> getGroup(String uid) {
+    if(uid == ""){
+      return FirebaseFirestore.instance
+          .collection("groups")
+          .doc("uid")
+          .collection("rewardHistory")
+          .snapshots();
+    }
     return FirebaseFirestore.instance
         .collection("groups")
         .doc(uid)

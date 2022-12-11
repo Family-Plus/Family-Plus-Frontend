@@ -134,32 +134,44 @@ class _AddTodoPageState extends State<AddTodoPage> {
               snapshot.data!.data() as Map<String, dynamic>;
           return InkWell(
             onTap: () {
-              FirebaseFirestore.instance.collection("Todo").add({
-                "title": titleController.text,
-                "task": type,
-                "category": category,
-                "description": descriptionController.text,
-                "number": value
-              });
 
-              FirebaseFirestore.instance
-                  .collection("groups")
-                  .doc(documentFields["groupId"])
-                  .collection("todo")
-                  .add({
-                "title": titleController.text,
-                "task": type,
-                "category": category,
-                "description": descriptionController.text,
-                "number": value,
-                "checkValue" : false
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Succes Add Todo"),
-                  duration: Duration(seconds: 2),
-                ),
-              );
+              if(documentFields["groupId"] != ""){
+                FirebaseFirestore.instance.collection("Todo").add({
+                  "title": titleController.text,
+                  "task": type,
+                  "category": category,
+                  "description": descriptionController.text,
+                  "number": value
+                });
+
+                FirebaseFirestore.instance
+                    .collection("groups")
+                    .doc(documentFields["groupId"])
+                    .collection("todo")
+                    .add({
+                  "title": titleController.text,
+                  "task": type,
+                  "category": category,
+                  "description": descriptionController.text,
+                  "number": value,
+                  "checkValue" : false
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Succes Add Todo"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Please Join or Create Group First"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+
+
             },
             child: Container(
               height: 56,

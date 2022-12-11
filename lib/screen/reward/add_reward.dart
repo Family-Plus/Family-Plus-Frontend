@@ -114,21 +114,33 @@ class _AddRewardState extends State<AddReward> {
 
           return InkWell(
             onTap: () {
-              FirebaseFirestore.instance
-                  .collection("reward")
-                  .add({"title": titleController.text, "number": value});
 
-              FirebaseFirestore.instance
-                  .collection("groups").doc(documentFields["groupId"]).collection("rewards")
-                  .add({"title": titleController.text, "number": value});
+              if(documentFields["groupId"] != ""){
+                FirebaseFirestore.instance
+                    .collection("reward")
+                    .add({"title": titleController.text, "number": value});
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Succes Add Reward"),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-              Navigator.pop(context);
+                FirebaseFirestore.instance
+                    .collection("groups").doc(documentFields["groupId"]).collection("rewards")
+                    .add({"title": titleController.text, "number": value});
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Succes Add Reward"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                Navigator.pop(context);
+              }else{
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Please Join or Create Group First"),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+
+
             },
             child: Container(
               height: 56,
