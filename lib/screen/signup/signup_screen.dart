@@ -1,6 +1,8 @@
 import 'package:family_plus/screen/login/login_screen.dart';
+import 'package:family_plus/states/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -10,7 +12,12 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
   bool obscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +58,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 40),
 
                 //TF NAMA
-                const TextField(
+                TextField(
+                  controller: _fullNameController,
                   keyboardType: TextInputType.name,
                   autocorrect: false,
                   cursorColor: Colors.black,
@@ -73,7 +81,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 16),
 
                 //TF EMAIL
-                const TextField(
+                TextField(
+                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
                   cursorColor: Colors.black,
@@ -96,6 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 //TF PASSWORD
                 TextField(
+                  controller: _passwordController,
                   obscureText: obscureText,
                   autocorrect: false,
                   cursorColor: Colors.black,
@@ -139,6 +149,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   onPressed: () {
+                    _signUpUser(_emailController.text, _passwordController.text,
+                        context, _fullNameController.text);
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -237,7 +250,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (builder) => LoginScreen()),
+                        );
+                      },
                       child: const Text(
                         "Login ",
                         style: TextStyle(
@@ -255,5 +274,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+
+  void _signUpUser(String email, String password, BuildContext context,
+      String fullName) async {
+    CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+    try {
+      String _returnString =
+          await _currentUser.signUpUser(email, password, fullName);
+      if (_returnString == 'succes') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => const LoginScreen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_returnString),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

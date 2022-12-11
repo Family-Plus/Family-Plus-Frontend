@@ -9,7 +9,8 @@ class OurTheme {
     return ThemeData(
       canvasColor: _lightGreen,
       primaryColor: _lightGreen,
-      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: _ligtGrey),
+      dividerColor: Colors.white,
+      colorScheme: ColorScheme.fromSwatch().copyWith(primary: Color(0xff1d1e26),secondary:  Color(0xff252041)),
       secondaryHeaderColor: _darkGrey,
       hintColor: _ligtGrey,
       inputDecorationTheme: InputDecorationTheme(

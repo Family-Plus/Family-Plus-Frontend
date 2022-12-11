@@ -1,40 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class ViewDataPage extends StatefulWidget {
-  const ViewDataPage({Key? key, required this.document, required this.id})
-      : super(key: key);
-
-  final Map<String, dynamic> document;
-  final String id;
+class AddTodoPage extends StatefulWidget {
+  const AddTodoPage({Key? key}) : super(key: key);
 
   @override
-  State<ViewDataPage> createState() => _ViewDataPageState();
+  State<AddTodoPage> createState() => _AddTodoPageState();
 }
 
-class _ViewDataPageState extends State<ViewDataPage> {
-  late TextEditingController titleController;
-  late TextEditingController descriptionController;
-  late String type;
-  late String category;
-  bool isEdit = false;
+class _AddTodoPageState extends State<AddTodoPage> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  String type = "";
+  String category = "";
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    String title = widget.document["title"] == null
-        ? "Judul Kosong"
-        : widget.document["title"];
-    titleController = TextEditingController(text: title);
+  int value = 0;
 
-    String description = widget.document["description"] == null
-        ? "No Description"
-        : widget.document["description"];
-    descriptionController = TextEditingController(text: description);
-
-    type = widget.document["task"] ?? "Important";
-    category = widget.document["category"] ?? "Food";
+  Stream<DocumentSnapshot> getUser() {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    String uid = _auth.currentUser!.uid;
+    return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
 
   @override
@@ -52,43 +38,6 @@ class _ViewDataPageState extends State<ViewDataPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.arrow_back, color: Colors.white, size: 20),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection("Todo")
-                              .doc(widget.id)
-                              .delete()
-                              .then((value) => {
-                                Navigator.pop(context)
-                              });
-                        },
-                        icon: Icon(Icons.delete, color: Colors.red, size: 20),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            isEdit = !isEdit;
-                          });
-                        },
-                        icon: Icon(Icons.edit_rounded,
-                            color: isEdit ? Colors.green : Colors.white,
-                            size: 20),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
@@ -96,7 +45,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isEdit ? "Editing" : "View",
+                      "Create",
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.white,
@@ -106,7 +55,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "Your Todo",
+                      "New Todo",
                       style: TextStyle(
                         fontSize: 33,
                         color: Colors.white,
@@ -119,15 +68,15 @@ class _ViewDataPageState extends State<ViewDataPage> {
                     SizedBox(height: 12),
                     title(context),
                     SizedBox(height: 30),
-                    label("Task Type"),
+                    label("Task Point"),
                     SizedBox(height: 12),
                     Row(
                       children: [
-                        taskSelect("Important", 0xff2664fa),
+                        taskSelect("250 Xp", 0xff2664fa, 250),
                         SizedBox(
                           width: 20,
                         ),
-                        taskSelect("Planned", 0xff2bc8d9),
+                        taskSelect("500 Xp", 0xff2bc8d9, 500),
                       ],
                     ),
                     SizedBox(height: 25),
@@ -162,7 +111,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                     SizedBox(
                       height: 50,
                     ),
-                    isEdit ? button(context) : Container(),
+                    button(context),
                     SizedBox(height: 30),
                   ],
                 ),
@@ -175,34 +124,62 @@ class _ViewDataPageState extends State<ViewDataPage> {
   }
 
   Widget button(context) {
-    return InkWell(
-      onTap: () {
-        FirebaseFirestore.instance.collection("Todo").doc(widget.id).update({
-          "title": titleController.text,
-          "task": type,
-          "category": category,
-          "description": descriptionController.text
+    return StreamBuilder<DocumentSnapshot>(
+        stream: getUser(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          Map<String, dynamic> documentFields =
+              snapshot.data!.data() as Map<String, dynamic>;
+          return InkWell(
+            onTap: () {
+              FirebaseFirestore.instance.collection("Todo").add({
+                "title": titleController.text,
+                "task": type,
+                "category": category,
+                "description": descriptionController.text,
+                "number": value
+              });
+
+              FirebaseFirestore.instance
+                  .collection("groups")
+                  .doc(documentFields["groupId"])
+                  .collection("todo")
+                  .add({
+                "title": titleController.text,
+                "task": type,
+                "category": category,
+                "description": descriptionController.text,
+                "number": value,
+                "checkValue" : false
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Succes Add Todo"),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            child: Container(
+              height: 56,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(colors: [
+                    Color(0xff8a32f1),
+                    Color(0xff8ad32f9),
+                  ])),
+              child: Center(
+                child: Text("Add Todo",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          );
         });
-        Navigator.pop(context);
-      },
-      child: Container(
-        height: 56,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(colors: [
-              Color(0xff8a32f1),
-              Color(0xff8ad32f9),
-            ])),
-        child: Center(
-          child: Text("Update Todo",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600)),
-        ),
-      ),
-    );
   }
 
   Widget description(context) {
@@ -212,7 +189,6 @@ class _ViewDataPageState extends State<ViewDataPage> {
       decoration: BoxDecoration(
           color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
-        enabled: isEdit,
         controller: descriptionController,
         maxLines: null,
         style: TextStyle(color: Colors.grey, fontSize: 17),
@@ -229,15 +205,15 @@ class _ViewDataPageState extends State<ViewDataPage> {
     );
   }
 
-  Widget taskSelect(String label, int color) {
+  Widget taskSelect(String label, int color, int number) {
     return InkWell(
-      onTap: isEdit
-          ? () {
-              setState(() {
-                type = label;
-              });
-            }
-          : null,
+      onTap: () {
+        setState(() {
+          type = label;
+          value = number;
+          print(number);
+        });
+      },
       child: Chip(
         backgroundColor: type == label ? Colors.white : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -255,14 +231,12 @@ class _ViewDataPageState extends State<ViewDataPage> {
 
   Widget categorySelect(String label, int color) {
     return InkWell(
-      onTap: isEdit
-          ? () {
-              setState(() {
-                category = label;
-                print(category);
-              });
-            }
-          : null,
+      onTap: () {
+        setState(() {
+          category = label;
+          print(category);
+        });
+      },
       child: Chip(
         backgroundColor: category == label ? Colors.white : Color(color),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -285,7 +259,6 @@ class _ViewDataPageState extends State<ViewDataPage> {
       decoration: BoxDecoration(
           color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
-        enabled: isEdit,
         controller: titleController,
         style: TextStyle(color: Colors.grey, fontSize: 17),
         decoration: InputDecoration(

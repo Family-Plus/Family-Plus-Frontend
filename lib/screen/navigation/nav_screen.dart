@@ -1,7 +1,9 @@
-import 'package:family_plus/screen/add_todo.dart';
-import 'package:family_plus/screen/home_screen.dart';
+import 'package:family_plus/screen/todo/add_todo.dart';
+import 'package:family_plus/screen/home/home_screen.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
-import 'package:family_plus/screen/todo_list.dart';
+import 'package:family_plus/screen/profile%20logout/logout_page.dart';
+import 'package:family_plus/screen/reward/reward_page.dart';
+import 'package:family_plus/screen/todo/todo_list.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/matescreen/rial.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -26,8 +28,8 @@ class _NavScreenState extends State<NavScreen> {
           HomeScreen(),
           TodoList(),
           AddTodoPage(),
-          TodoList(),
-          TodoList(),
+          RewardList(),
+          LogOutPage(),
         ],
         items: [
           PersistentBottomNavBarItem(
@@ -36,7 +38,7 @@ class _NavScreenState extends State<NavScreen> {
             inactiveColorPrimary: Colors.grey,
           ),
           PersistentBottomNavBarItem(
-            icon: const Icon(Icons.groups_outlined),
+            icon: const Icon(Icons.task_outlined),
             activeColorPrimary: Colors.black,
             inactiveColorPrimary: Colors.black26,
           ),
@@ -48,7 +50,7 @@ class _NavScreenState extends State<NavScreen> {
             activeColorPrimary: Colors.black,
           ),
           PersistentBottomNavBarItem(
-            icon: const Icon(Icons.shopping_cart_outlined),
+            icon: const Icon(Icons.wallet_giftcard_outlined),
             activeColorPrimary: Colors.blue,
             inactiveColorPrimary: Colors.grey,
           ),
