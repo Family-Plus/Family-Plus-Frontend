@@ -16,7 +16,6 @@ class NavScreen extends StatefulWidget {
 }
 
 class _NavScreenState extends State<NavScreen> {
-  var _selectedIndex = 0;
   List<Widget> screens = const [HomeScreen(), LoginScreen()];
 
   @override

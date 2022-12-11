@@ -263,7 +263,7 @@ class _LogOutPageState extends State<LogOutPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (builder) => RewardHistory(),
+            builder: (builder) => const RewardHistory(),
           ),
         );
       },
@@ -272,11 +272,11 @@ class _LogOutPageState extends State<LogOutPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icons, color: Colors.white),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(nameHistory,
               textAlign: TextAlign.center,
               style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
         ],
       ),
     );

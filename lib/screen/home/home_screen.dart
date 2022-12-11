@@ -334,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (builder) => JoinGroup()),
+              MaterialPageRoute(builder: (builder) => const JoinGroup()),
             );
           },
           child: Container(
