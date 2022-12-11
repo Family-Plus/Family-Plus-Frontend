@@ -82,14 +82,18 @@ class _HomeScreenState extends State<HomeScreen> {
     Map<String, dynamic> dataUser = docSnapshotUser.data()!;
     String groupId = dataUser['groupId'];
 
-    var collectionGroup = FirebaseFirestore.instance.collection('groups');
-    var docSnapshot = await collectionGroup.doc(groupId).get();
+    if(groupId !=  ""){
+      var collectionGroup = FirebaseFirestore.instance.collection('groups');
+      var docSnapshot = await collectionGroup.doc(groupId).get();
 
-    Map<String, dynamic> data = docSnapshot.data()!;
+      Map<String, dynamic> data = docSnapshot.data()!;
 
-    setState(() {
-      groupName = data['name'];
-    });
+      setState(() {
+        groupName = data['name'];
+      });
+    }
+
+
   }
 
   int anu = 0;

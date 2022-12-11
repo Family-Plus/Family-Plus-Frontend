@@ -11,7 +11,15 @@ class TodoHistory extends StatefulWidget {
 }
 
 class _TodoHistoryState extends State<TodoHistory> {
+
   Stream<QuerySnapshot> getGroup(String uid) {
+    if(uid == ""){
+      return FirebaseFirestore.instance
+          .collection("groups")
+          .doc("uid")
+          .collection("todoHistory")
+          .snapshots();
+    }
     return FirebaseFirestore.instance
         .collection("groups")
         .doc(uid)
