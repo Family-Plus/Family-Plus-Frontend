@@ -38,7 +38,7 @@ class _NavScreenState extends State<NavScreen> {
             inactiveColorPrimary: Colors.grey,
           ),
           PersistentBottomNavBarItem(
-            icon: const Icon(Icons.groups_outlined),
+            icon: const Icon(Icons.task_outlined),
             activeColorPrimary: Colors.black,
             inactiveColorPrimary: Colors.black26,
           ),
@@ -50,7 +50,7 @@ class _NavScreenState extends State<NavScreen> {
             activeColorPrimary: Colors.black,
           ),
           PersistentBottomNavBarItem(
-            icon: const Icon(Icons.shopping_cart_outlined),
+            icon: const Icon(Icons.wallet_giftcard_outlined),
             activeColorPrimary: Colors.blue,
             inactiveColorPrimary: Colors.grey,
           ),

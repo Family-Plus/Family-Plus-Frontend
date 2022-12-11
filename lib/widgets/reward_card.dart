@@ -3,16 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RewardCard extends StatefulWidget {
-  const RewardCard({Key? key, required this.title, required this.value})
+  const RewardCard({Key? key, required this.title, required this.value, required this.id})
       : super(key: key);
   final String title;
   final int value;
+  final String id;
 
   @override
   State<RewardCard> createState() => _RewardCardState();
 }
 
 class _RewardCardState extends State<RewardCard> {
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+
   Stream<DocumentSnapshot> getUser() {
     FirebaseAuth _auth = FirebaseAuth.instance;
     String uid = _auth.currentUser!.uid;
@@ -90,6 +95,31 @@ class _RewardCardState extends State<RewardCard> {
                                   ? () {
                                       if (documentFields["exp"] >=
                                           widget.value) {
+
+                                        String uid = _auth.currentUser!.uid;
+
+                                        FirebaseFirestore.instance.collection("users").doc(uid).update({
+                                          "exp" : documentFields["exp"] - widget.value,
+                                        });
+
+                                        FirebaseFirestore.instance
+                                            .collection("groups")
+                                            .doc(documentFields["groupId"])
+                                            .collection("rewardHistory")
+                                            .add({
+                                          "title": widget.title,
+                                          "claimedBy": documentFields["fullName"],
+                                          "number": widget.value
+                                        });
+
+                                        FirebaseFirestore.instance
+                                            .collection("groups")
+                                            .doc(documentFields["groupId"])
+                                            .collection("rewards")
+                                            .doc(widget.id)
+                                            .delete()
+                                            .then((value) => {print("Todo Deleted")});
+
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(
@@ -108,7 +138,7 @@ class _RewardCardState extends State<RewardCard> {
                                       }
                                     }
                                   : null,
-                              child: Text("Claim"),
+                              child: Text("Claim", style: TextStyle(color: Colors.white)),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.purple,
                               ),

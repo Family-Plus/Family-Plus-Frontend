@@ -103,7 +103,7 @@ class _TodoListState extends State<TodoList> {
 
                       selected.add(Select(
                           id: snapshot.data!.docs[index].id,
-                          checkValue: false));
+                          checkValue: document["checkValue"] == null ? false : document["checkValue"]));
 
                       return InkWell(
                         onTap: () {
@@ -117,6 +117,7 @@ class _TodoListState extends State<TodoList> {
                           );
                         },
                         child: TodoCard(
+                          id: snapshot.data!.docs[index].id,
                           title: document["title"] == null
                               ? "Judul Kosong"
                               : document["title"],

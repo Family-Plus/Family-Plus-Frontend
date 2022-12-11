@@ -19,7 +19,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
   late String type;
   late String category;
   bool isEdit = false;
-  int value = 0;
+  late int value;
 
   @override
   void initState() {
@@ -29,6 +29,8 @@ class _ViewDataPageState extends State<ViewDataPage> {
         ? "Judul Kosong"
         : widget.document["title"];
     titleController = TextEditingController(text: title);
+
+    value = widget.document["number"] == null ? 0 : widget.document["number"];
 
     String description = widget.document["description"] == null
         ? "No Description"

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
+import 'package:family_plus/screen/reward_history.dart';
+import 'package:family_plus/screen/todo_history.dart';
 import 'package:family_plus/services/auth_state_changes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +79,27 @@ class _LogOutPageState extends State<LogOutPage> {
                           label("Group Id"),
                           SizedBox(height: 12),
                           buttonId(context, documentFields["groupId"]),
+                          SizedBox(height: 25),
+                          label("History"),
+                          SizedBox(height: 12),
+                          IntrinsicHeight(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: buildHistoryTodo(context,
+                                      Icons.task_rounded, "View Todo History"),
+                                ),
+                                buildDivider(),
+                                Expanded(
+                                  child: buildHistoryReward(
+                                      context,
+                                      Icons.wallet_giftcard_rounded,
+                                      "View Reward History"),
+                                )
+                              ],
+                            ),
+                          ),
                           SizedBox(
                             height: 50,
                           ),
@@ -165,12 +188,12 @@ class _LogOutPageState extends State<LogOutPage> {
     return InkWell(
       onTap: () async {
         String _returnString = await signOut();
-        if(_returnString == "success"){
+        if (_returnString == "success") {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (builder) => AuthChanges()),
           );
-        }else {
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(_returnString),
@@ -178,7 +201,6 @@ class _LogOutPageState extends State<LogOutPage> {
             ),
           );
         }
-
       },
       child: Container(
         height: 56,
@@ -196,6 +218,64 @@ class _LogOutPageState extends State<LogOutPage> {
                   fontSize: 18,
                   fontWeight: FontWeight.w600)),
         ),
+      ),
+    );
+  }
+
+  Widget buildHistoryTodo(
+      BuildContext context, IconData icons, String nameHistory) {
+    return MaterialButton(
+      onPressed: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (builder) => TodoHistory(),
+          ),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icons, color: Colors.white),
+          SizedBox(height: 10),
+          Text(nameHistory,
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+        ],
+      ),
+    );
+  }
+
+  Widget buildDivider() {
+    return Container(
+      height: 24,
+      child: VerticalDivider(),
+    );
+  }
+
+  Widget buildHistoryReward(
+      BuildContext context, IconData icons, String nameHistory) {
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (builder) => RewardHistory(),
+          ),
+        );
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icons, color: Colors.white),
+          SizedBox(height: 10),
+          Text(nameHistory,
+              textAlign: TextAlign.center,
+              style:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+        ],
       ),
     );
   }

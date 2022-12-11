@@ -75,6 +75,7 @@ class _RewardListState extends State<RewardList> {
 
                       },
                       child: RewardCard(
+                        id: snapshot.data!.docs[index].id,
                         title: document["title"] == null
                             ? "Judul Kosong"
                             : document["title"],

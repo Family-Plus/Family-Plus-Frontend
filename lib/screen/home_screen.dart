@@ -244,20 +244,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   //TITLE
                   Text(
-                    "Join or Create Group Here",
+                    checkJoin ? "List Family Member" : "Join or Create Group Here",
                     style: TextStyle(
                       fontSize: 24,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(
+                  checkJoin ? SizedBox(height: 10) : Padding(
                     padding: EdgeInsets.symmetric(vertical: 32),
                     child: Center(
                       child: Text(
-                        checkJoin
-                            ? "Already Join"
-                            : "You haven't been in the family group",
+                            "You haven't been in the family group",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),

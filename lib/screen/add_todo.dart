@@ -151,7 +151,8 @@ class _AddTodoPageState extends State<AddTodoPage> {
                 "task": type,
                 "category": category,
                 "description": descriptionController.text,
-                "number": value
+                "number": value,
+                "checkValue" : false
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
