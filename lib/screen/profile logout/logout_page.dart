@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
-import 'package:family_plus/screen/reward_history.dart';
-import 'package:family_plus/screen/todo_history.dart';
+import 'package:family_plus/screen/history/reward_history.dart';
+import 'package:family_plus/screen/history/todo_history.dart';
 import 'package:family_plus/services/auth_state_changes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

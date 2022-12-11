@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:family_plus/screen/add_reward.dart';
+import 'package:family_plus/screen/reward/add_reward.dart';
 import 'package:family_plus/widgets/reward_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

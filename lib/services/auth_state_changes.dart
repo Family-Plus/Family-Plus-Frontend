@@ -1,6 +1,6 @@
-import 'package:family_plus/screen/home_screen.dart';
+import 'package:family_plus/screen/home/home_screen.dart';
 import 'package:family_plus/screen/login/login_screen.dart';
-import 'package:family_plus/screen/nav_screen.dart';
+import 'package:family_plus/screen/navigation/nav_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

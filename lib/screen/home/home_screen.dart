@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:family_plus/screen/create_group.dart';
-import 'package:family_plus/screen/join_group.dart';
+import 'package:family_plus/screen/create%20group/create_group.dart';
+import 'package:family_plus/screen/join%20group/join_group.dart';
 import 'package:family_plus/widgets/member_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

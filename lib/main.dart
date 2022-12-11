@@ -1,5 +1,5 @@
 import 'package:family_plus/firebase_options.dart';
-import 'package:family_plus/screen/splash_screen.dart';
+import 'package:family_plus/screen/get%20started/splash_screen.dart';
 import 'package:family_plus/states/current_user.dart';
 import 'package:family_plus/utils/our_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
