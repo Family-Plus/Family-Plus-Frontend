@@ -3,6 +3,7 @@ import 'package:family_plus/states/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -209,7 +210,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ],
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Alert(
+                      context: context,
+                      type: AlertType.info,
+                      title: "Fitur Coming Soon",
+                      desc: "Please use SignUp or Login",
+                      buttons: [
+                        DialogButton(
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                          child: const Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )
+                      ],
+                    ).show();
+                  },
                 ),
                 const SizedBox(height: 16),
 
@@ -235,7 +253,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ],
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Alert(
+                      context: context,
+                      type: AlertType.info,
+                      title: "Fitur Coming Soon",
+                      desc: "Please use SignUp or Login",
+                      buttons: [
+                        DialogButton(
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                          child: const Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )
+                      ],
+                    ).show();
+                  },
                 ),
                 const SizedBox(height: 32),
 
@@ -254,7 +289,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (builder) => LoginScreen()),
+                              builder: (builder) => const LoginScreen()),
                         );
                       },
                       child: const Text(

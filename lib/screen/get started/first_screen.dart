@@ -3,6 +3,7 @@ import 'package:family_plus/screen/signup/signup_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
@@ -100,7 +101,22 @@ class _FirstScreenState extends State<FirstScreen> {
                 height: 45,
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    
+                    Alert(
+                      context: context,
+                      type: AlertType.info,
+                      title: "Fitur Coming Soon",
+                      desc: "Please use SignUp or Login",
+                      buttons: [
+                        DialogButton(
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                          child: const Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )
+                      ],
+                    ).show();
                   },
                   style: ElevatedButton.styleFrom(
                     side: const BorderSide(color: Colors.white),
@@ -128,7 +144,24 @@ class _FirstScreenState extends State<FirstScreen> {
                 width: 300,
                 height: 45,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    Alert(
+                      context: context,
+                      type: AlertType.info,
+                      title: "Fitur Coming Soon",
+                      desc: "Please use SignUp or Login",
+                      buttons: [
+                        DialogButton(
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                          child: const Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )
+                      ],
+                    ).show();
+                  },
                   style: ElevatedButton.styleFrom(
                     side: const BorderSide(color: Colors.white),
                     shape: const StadiumBorder(),
@@ -153,7 +186,7 @@ class _FirstScreenState extends State<FirstScreen> {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   text: 'Already have an account? ',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                   ),
                   children: [
@@ -161,12 +194,12 @@ class _FirstScreenState extends State<FirstScreen> {
                       recognizer: TapGestureRecognizer()..onTap = (){
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
+                            builder: (context) => const LoginScreen(),
                           ),
                         );
                       },
                       text: 'Login',
-                      style: TextStyle(
+                      style: const TextStyle(
                         decoration: TextDecoration.underline,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,

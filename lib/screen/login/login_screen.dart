@@ -6,6 +6,7 @@ import 'package:family_plus/states/current_user.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -188,7 +189,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Alert(
+                      context: context,
+                      type: AlertType.info,
+                      title: "Fitur Coming Soon",
+                      desc: "Please use SignUp or Login",
+                      buttons: [
+                        DialogButton(
+                          child: Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                        )
+                      ],
+                    ).show();
+                  },
                 ),
                 const SizedBox(height: 16),
 
@@ -214,7 +232,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Alert(
+                      context: context,
+                      type: AlertType.info,
+                      title: "Fitur Coming Soon",
+                      desc: "Please use SignUp or Login",
+                      buttons: [
+                        DialogButton(
+                          child: Text(
+                            "Ok",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          width: 120,
+                        )
+                      ],
+                    ).show();
+                  },
                 ),
                 const SizedBox(height: 32),
 
