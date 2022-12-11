@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:family_plus/models/user_model.dart';
-import 'package:family_plus/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class CurrentUser extends ChangeNotifier {
@@ -16,7 +14,7 @@ class CurrentUser extends ChangeNotifier {
 
   String get getEmail => _email;
 
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<String> onStartUp() async {
     String retval = 'error';
@@ -24,14 +22,16 @@ class CurrentUser extends ChangeNotifier {
 
 
     try{
-      User? _firebaseUser = await _auth.currentUser;
-      _currentUser.uid = _firebaseUser!.uid;
-      _currentUser.email = _firebaseUser.email!;
-      _uid = _firebaseUser!.uid;
-      _email = _firebaseUser.email!;
+      User? firebaseUser = _auth.currentUser;
+      _currentUser.uid = firebaseUser!.uid;
+      _currentUser.email = firebaseUser.email!;
+      _uid = firebaseUser.uid;
+      _email = firebaseUser.email!;
       retval = 'succes';
     }catch(e){
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
 
     return retval;
@@ -44,22 +44,23 @@ class CurrentUser extends ChangeNotifier {
       await _auth.signOut();
       retVal = "success";
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
     return retVal;
   }
 
   Future<String> signUpUser(String email, String password, String fullName) async {
     String retval = 'error';
-    late UserModel _user;
 
     try {
-      UserCredential _authResult = await _auth.createUserWithEmailAndPassword(
+      UserCredential authResult = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-       FirebaseFirestore.instance.collection("users").doc(_authResult.user!.uid).set({
+       FirebaseFirestore.instance.collection("users").doc(authResult.user!.uid).set({
         'fullName': fullName,
-        'email': _authResult.user!.email,
+        'email': authResult.user!.email,
         'accountCreated': Timestamp.now(),
          'groupId' : "",
          'exp' : 0
@@ -89,17 +90,17 @@ class CurrentUser extends ChangeNotifier {
 
   Future<String> loginWithGoogle() async {
     String retval = 'error';
-    GoogleSignIn _googleSignIn = GoogleSignIn(
+    GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: [
         'email',
         'https://www.googleapis.com/auth/contacts.readonly',
       ],
     );
     try {
-      GoogleSignInAccount? _googleUser = await _googleSignIn.signIn();
-      GoogleSignInAuthentication _googleAuth = await _googleUser!.authentication;
+      GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
-          idToken: _googleAuth.idToken, accessToken: _googleAuth.accessToken);
+          idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
       _auth.signInWithCredential(credential);
 
       retval = 'succes';

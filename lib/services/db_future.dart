@@ -1,22 +1,20 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:family_plus/models/user_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class DBFuture{
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<String> createGroup(
       String groupName, String userUid) async {
     String retVal = "error";
     List<String> members = [];
-    List<String> tokens = [];
 
     try {
       members.add(userUid);
       // tokens.add(user.notifToken);
-      DocumentReference _docRef;
-        _docRef = await _firestore.collection("groups").add({
+      DocumentReference docRef;
+        docRef = await _firestore.collection("groups").add({
           'name': groupName.trim(),
           'leader': userUid,
           'members': members,
@@ -25,13 +23,15 @@ class DBFuture{
 
 
       await _firestore.collection("users").doc(userUid).update({
-        'groupId': _docRef.id,
+        'groupId': docRef.id,
       });
 
       //add a book
       retVal = "success";
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
 
     return retVal;
@@ -40,7 +40,6 @@ class DBFuture{
   Future<String> joinGroup(String groupId, String userUid) async {
     String retVal = "error";
     List<String> members = [];
-    List<String> tokens = [];
     try {
       members.add(userUid);
       // tokens.add(userModel.notifToken);
@@ -55,9 +54,13 @@ class DBFuture{
       retVal = "success";
     } on PlatformException catch (e) {
       retVal = "Make sure you have the right group ID!";
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
 
     return retVal;

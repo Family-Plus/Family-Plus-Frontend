@@ -25,16 +25,12 @@ class _ViewDataPageState extends State<ViewDataPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    String title = widget.document["title"] == null
-        ? "Judul Kosong"
-        : widget.document["title"];
+    String title = widget.document["title"] ?? "Judul Kosong";
     titleController = TextEditingController(text: title);
 
-    value = widget.document["number"] == null ? 0 : widget.document["number"];
+    value = widget.document["number"] ?? 0;
 
-    String description = widget.document["description"] == null
-        ? "No Description"
-        : widget.document["description"];
+    String description = widget.document["description"] ?? "No Description";
     descriptionController = TextEditingController(text: description);
 
     type = widget.document["task"] ?? "Important";
@@ -42,9 +38,17 @@ class _ViewDataPageState extends State<ViewDataPage> {
   }
 
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    titleController.dispose();
+    descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,7 +57,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient:
               LinearGradient(colors: [Color(0xff1d1e26), Color(0xff252041)]),
         ),
@@ -61,7 +65,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -69,7 +73,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                   ),
                   Row(
                     children: [
@@ -77,7 +81,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                           stream: getUser(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return Center(child: CircularProgressIndicator());
+                              return const Center(child: CircularProgressIndicator());
                             }
 
                             Map<String, dynamic> documentFields =
@@ -93,7 +97,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                                     .delete()
                                     .then((value) => {Navigator.pop(context)});
                               },
-                              icon: Icon(Icons.delete,
+                              icon: const Icon(Icons.delete,
                                   color: Colors.red, size: 20),
                             );
                           }),
@@ -119,15 +123,15 @@ class _ViewDataPageState extends State<ViewDataPage> {
                   children: [
                     Text(
                       isEdit ? "Editing" : "View",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 33,
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 4,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                       "Your Todo",
                       style: TextStyle(
                         fontSize: 33,
@@ -136,56 +140,56 @@ class _ViewDataPageState extends State<ViewDataPage> {
                         letterSpacing: 2,
                       ),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     label("Task Title"),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     title(context),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     label("Task Point"),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         taskSelect("250 Xp", 0xff2664fa, 250),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         taskSelect("500 Xp", 0xff2bc8d9, 500),
                       ],
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     label("Description"),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     description(context),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     label("Category"),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Wrap(
                       runSpacing: 10,
                       children: [
                         categorySelect("Food", 0xffff6d6e),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         categorySelect("Workout", 0xfff29732),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         categorySelect("Work", 0xff6557ff),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         categorySelect("Design", 0xff234ebd),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         categorySelect("Run", 0xff2bc8d9),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     isEdit ? button(context) : Container(),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ],
                 ),
               )
@@ -201,7 +205,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
         stream: getUser(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           Map<String, dynamic> documentFields =
               snapshot.data!.data() as Map<String, dynamic>;
@@ -229,7 +233,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
                 "number": value
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text("Succes Add Todo"),
                   duration: Duration(seconds: 2),
                 ),
@@ -242,11 +246,11 @@ class _ViewDataPageState extends State<ViewDataPage> {
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(colors: [
+                  gradient: const LinearGradient(colors: [
                     Color(0xff8a32f1),
-                    Color(0xff8ad32f9),
+                    Color(0xffad32f9),
                   ])),
-              child: Center(
+              child: const Center(
                 child: Text("Update Todo",
                     style: TextStyle(
                         color: Colors.white,
@@ -263,13 +267,13 @@ class _ViewDataPageState extends State<ViewDataPage> {
       height: 150,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-          color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
+          color: const Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         enabled: isEdit,
         controller: descriptionController,
         maxLines: null,
-        style: TextStyle(color: Colors.grey, fontSize: 17),
-        decoration: InputDecoration(
+        style: const TextStyle(color: Colors.grey, fontSize: 17),
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Description",
           hintStyle: TextStyle(
@@ -302,7 +306,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
               fontSize: 15,
               fontWeight: FontWeight.w600),
         ),
-        labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
     );
   }
@@ -313,7 +317,6 @@ class _ViewDataPageState extends State<ViewDataPage> {
           ? () {
               setState(() {
                 category = label;
-                print(category);
               });
             }
           : null,
@@ -327,7 +330,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
               fontSize: 15,
               fontWeight: FontWeight.w600),
         ),
-        labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
     );
   }
@@ -337,12 +340,12 @@ class _ViewDataPageState extends State<ViewDataPage> {
       height: 55,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-          color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
+          color: const Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         enabled: isEdit,
         controller: titleController,
-        style: TextStyle(color: Colors.grey, fontSize: 17),
-        decoration: InputDecoration(
+        style: const TextStyle(color: Colors.grey, fontSize: 17),
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Task Title",
           hintStyle: TextStyle(
@@ -358,7 +361,7 @@ class _ViewDataPageState extends State<ViewDataPage> {
   Widget label(String label) {
     return Text(
       label,
-      style: TextStyle(
+      style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 16.5,

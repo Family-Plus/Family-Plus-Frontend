@@ -27,13 +27,10 @@ class _RewardHistoryState extends State<RewardHistory> {
   }
 
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
-
-  Stream<QuerySnapshot> _stream =
-      FirebaseFirestore.instance.collection("Todo").snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +51,7 @@ class _RewardHistoryState extends State<RewardHistory> {
           stream: getUser(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             Map<String, dynamic> documentFields =
                 snapshot.data!.data() as Map<String, dynamic>;
@@ -63,7 +60,7 @@ class _RewardHistoryState extends State<RewardHistory> {
                 stream: getGroup(documentFields["groupId"]),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   return ListView.builder(
@@ -75,15 +72,9 @@ class _RewardHistoryState extends State<RewardHistory> {
                       return InkWell(
                         onTap: () {},
                         child: RewardHistoryCard(
-                          title: document["title"] == null
-                              ? "Judul Kosong"
-                              : document["title"],
-                          clamiedBy: document["claimedBy"] == null
-                              ? "Nama Kosong"
-                              : document["claimedBy"],
-                          value: document["number"] == null
-                              ? 0
-                              : document["number"],
+                          title: document["title"] ?? "Judul Kosong",
+                          clamiedBy: document["claimedBy"] ?? "Nama Kosong",
+                          value: document["number"] ?? 0,
                         ),
                       );
                     },

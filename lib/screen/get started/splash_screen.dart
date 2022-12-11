@@ -7,12 +7,14 @@ class SplashScreen extends StatefulWidget {
   final TextStyle styleTextUnderTheLoader = const TextStyle(
       fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black);
 
+  const SplashScreen({super.key});
+
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final splashDelay = 5;
+  final splashDelay = 3;
 
   @override
   void initState() {
