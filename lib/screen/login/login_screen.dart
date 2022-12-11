@@ -308,11 +308,10 @@ class _LoginScreenState extends State<LoginScreen> {
       String returnString = await currentUser.loginWithEmail(email, password);
       if (returnString == 'succes') {
         if(!mounted)return;
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const AuthChanges(),
-          ),
-        );
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => const AuthChanges()));
       }else{
         if(!mounted)return;
         ScaffoldMessenger.of(context).showSnackBar(
