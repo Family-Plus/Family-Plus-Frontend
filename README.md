@@ -1,16 +1,22 @@
-# family_plus
+# Family Plus
+![family_plus_ss](https://github.com/Family-Plus/Family-Plus-Frontend/blob/master/assets/Header.png?raw=true)
+## Apa itu Family Plus ?
+Family Plus adalah sebuah aplikasi berbasis multiplatform yang dibangun untuk mempermudah sebuah keluarga mengatur tugas rumahan dan memberikan motivasi serta apresiasi setelah menyelesaikan tugas mereka.
 
-A new Flutter project.
+### Aplikasi ini memiliki fitur sebagai berikut: 
+- Membuat Grup
+- Membuat Todo List
+- Point System
+- Reward System
 
-## Getting Started
+### Family Plus Dibuat dengan menggunakan: 
+- Flutter
+- Firebase Authentication
+- Database Firestore
+- API
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Team C22-103
+- [Rafif Wahyu H](https://github.com/rafifwhy)
+- [Riyan Putra F](https://github.com/riyanputraf)
+- [Muhammad Aldi D](https://github.com/madj14)
+- [Pramudita Wahyu R](https://github.com/pramudita147)
