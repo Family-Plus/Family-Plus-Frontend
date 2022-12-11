@@ -1,5 +1,6 @@
 import 'package:family_plus/screen/login/login_screen.dart';
 import 'package:family_plus/states/current_user.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -13,11 +14,20 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController _fullNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool obscureText = true;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +74,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   keyboardType: TextInputType.name,
                   autocorrect: false,
                   cursorColor: Colors.black,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Name',
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
@@ -87,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   keyboardType: TextInputType.emailAddress,
                   autocorrect: false,
                   cursorColor: Colors.black,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Email',
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(
@@ -313,11 +323,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _signUpUser(String email, String password, BuildContext context,
       String fullName) async {
-    CurrentUser _currentUser = Provider.of<CurrentUser>(context, listen: false);
+    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
     try {
-      String _returnString =
-          await _currentUser.signUpUser(email, password, fullName);
-      if (_returnString == 'succes') {
+      String returnString =
+          await currentUser.signUpUser(email, password, fullName);
+      if (returnString == 'succes') {
+        if(!mounted)return;
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -325,15 +336,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         );
       } else {
+        if(!mounted)return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_returnString),
-            duration: Duration(seconds: 2),
+            content: Text(returnString),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

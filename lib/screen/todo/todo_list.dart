@@ -14,7 +14,7 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
 
   Stream<QuerySnapshot> getGroup(String uid) {
-    if(uid == null || uid == ""){
+    if(uid == ""){
       return FirebaseFirestore.instance
           .collection("groups")
           .doc("uid")
@@ -29,13 +29,11 @@ class _TodoListState extends State<TodoList> {
   }
 
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
 
-  Stream<QuerySnapshot> _stream =
-      FirebaseFirestore.instance.collection("Todo").snapshots();
   List<Select> selected = [];
 
   @override
@@ -57,7 +55,7 @@ class _TodoListState extends State<TodoList> {
           stream: getUser(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             Map<String, dynamic> documentFields =
                 snapshot.data!.data() as Map<String, dynamic>;
@@ -67,7 +65,7 @@ class _TodoListState extends State<TodoList> {
                 builder: (context, snapshot) {
 
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   return ListView.builder(
@@ -105,7 +103,7 @@ class _TodoListState extends State<TodoList> {
 
                       selected.add(Select(
                           id: snapshot.data!.docs[index].id,
-                          checkValue: document["checkValue"] == null ? false : document["checkValue"]));
+                          checkValue: document["checkValue"] ?? false));
 
                       return InkWell(
                         onTap: () {
@@ -114,22 +112,18 @@ class _TodoListState extends State<TodoList> {
                             MaterialPageRoute(
                               builder: (builder) => ViewDataPage(
                                   document: document,
-                                  id: snapshot.data!.docs[index].id ?? ""),
+                                  id: snapshot.data!.docs[index].id),
                             ),
                           );
                         },
                         child: TodoCard(
-                          id: snapshot.data!.docs[index].id ?? "",
-                          title: document["title"] == null
-                              ? "Judul Kosong"
-                              : document["title"],
+                          id: snapshot.data!.docs[index].id,
+                          title: document["title"] ?? "Judul Kosong",
                           check:  document["checkValue"],
                           iconBgColor: Colors.white,
                           iconColor: iconColor,
                           iconData: iconData,
-                          time: document["number"].toString() == null
-                              ? "No Xp"
-                              : document["number"].toString(),
+                          time: document["number"].toString(),
                           index: index,
                           onChange: onChange,
                           value: document["number"],

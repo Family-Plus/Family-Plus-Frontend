@@ -28,13 +28,11 @@ class _TodoHistoryState extends State<TodoHistory> {
   }
 
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
 
-  Stream<QuerySnapshot> _stream =
-  FirebaseFirestore.instance.collection("Todo").snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +53,7 @@ class _TodoHistoryState extends State<TodoHistory> {
           stream: getUser(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             Map<String, dynamic> documentFields =
             snapshot.data!.data() as Map<String, dynamic>;
@@ -65,7 +63,7 @@ class _TodoHistoryState extends State<TodoHistory> {
                 builder: (context, snapshot) {
 
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   return ListView.builder(
@@ -80,12 +78,8 @@ class _TodoHistoryState extends State<TodoHistory> {
 
                         },
                         child: TodoHistoryCard(
-                          title: document["title"] == null
-                              ? "Judul Kosong"
-                              : document["title"],
-                          completedBy: document["completedBy"] == null
-                              ? "Nama Kosong"
-                              : document["completedBy"],
+                          title: document["title"] ?? "Judul Kosong",
+                          completedBy: document["completedBy"] ?? "Nama Kosong",
                           value: document["number"],
                         ),
                       );

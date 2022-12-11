@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AddReward extends StatefulWidget {
@@ -18,9 +19,17 @@ class _AddRewardState extends State<AddReward> {
   int value = 0;
 
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    titleController.dispose();
+    descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -29,7 +38,7 @@ class _AddRewardState extends State<AddReward> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient:
               LinearGradient(colors: [Color(0xff1d1e26), Color(0xff252041)]),
         ),
@@ -37,21 +46,21 @@ class _AddRewardState extends State<AddReward> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Create",
                       style: TextStyle(
                         fontSize: 33,
@@ -60,8 +69,8 @@ class _AddRewardState extends State<AddReward> {
                         letterSpacing: 4,
                       ),
                     ),
-                    SizedBox(height: 8),
-                    Text(
+                    const SizedBox(height: 8),
+                    const Text(
                       "Your Reward",
                       style: TextStyle(
                         fontSize: 33,
@@ -70,28 +79,28 @@ class _AddRewardState extends State<AddReward> {
                         letterSpacing: 2,
                       ),
                     ),
-                    SizedBox(height: 25),
+                    const SizedBox(height: 25),
                     label("Reward Title"),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     title(context),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     label("Exp Requirement"),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         taskSelect("5000 Xp", 0xff2664fa, 5000),
-                        SizedBox(
+                        const SizedBox(
                           width: 20,
                         ),
                         taskSelect("10000 Xp", 0xff2bc8d9, 10000),
                       ],
                     ),
-                    SizedBox(height: 25),
-                    SizedBox(
+                    const SizedBox(height: 25),
+                    const SizedBox(
                       height: 50,
                     ),
                     button(context),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ],
                 ),
               )
@@ -107,7 +116,7 @@ class _AddRewardState extends State<AddReward> {
         stream: getUser(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           Map<String, dynamic> documentFields =
               snapshot.data!.data() as Map<String, dynamic>;
@@ -125,7 +134,7 @@ class _AddRewardState extends State<AddReward> {
                     .add({"title": titleController.text, "number": value});
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text("Succes Add Reward"),
                     duration: Duration(seconds: 2),
                   ),
@@ -133,7 +142,7 @@ class _AddRewardState extends State<AddReward> {
                 Navigator.pop(context);
               }else{
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text("Please Join or Create Group First"),
                     duration: Duration(seconds: 2),
                   ),
@@ -147,11 +156,11 @@ class _AddRewardState extends State<AddReward> {
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(colors: [
+                  gradient: const LinearGradient(colors: [
                     Color(0xff8a32f1),
-                    Color(0xff8ad32f9),
+                    Color(0xffad32f9),
                   ])),
-              child: Center(
+              child: const Center(
                 child: Text("Add Reward",
                     style: TextStyle(
                         color: Colors.white,
@@ -168,12 +177,12 @@ class _AddRewardState extends State<AddReward> {
       height: 150,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-          color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
+          color: const Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         controller: descriptionController,
         maxLines: null,
-        style: TextStyle(color: Colors.grey, fontSize: 17),
-        decoration: InputDecoration(
+        style: const TextStyle(color: Colors.grey, fontSize: 17),
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Description",
           hintStyle: TextStyle(
@@ -192,7 +201,9 @@ class _AddRewardState extends State<AddReward> {
         setState(() {
           type = label;
           value = number;
-          print(number);
+          if (kDebugMode) {
+            print(number);
+          }
         });
       },
       child: Chip(
@@ -205,7 +216,7 @@ class _AddRewardState extends State<AddReward> {
               fontSize: 15,
               fontWeight: FontWeight.w600),
         ),
-        labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
     );
   }
@@ -215,7 +226,6 @@ class _AddRewardState extends State<AddReward> {
       onTap: () {
         setState(() {
           category = label;
-          print(category);
         });
       },
       child: Chip(
@@ -228,7 +238,7 @@ class _AddRewardState extends State<AddReward> {
               fontSize: 15,
               fontWeight: FontWeight.w600),
         ),
-        labelPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 17, vertical: 3.0),
       ),
     );
   }
@@ -238,11 +248,11 @@ class _AddRewardState extends State<AddReward> {
       height: 55,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-          color: Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
+          color: const Color(0xff2a2e3d), borderRadius: BorderRadius.circular(15)),
       child: TextFormField(
         controller: titleController,
-        style: TextStyle(color: Colors.grey, fontSize: 17),
-        decoration: InputDecoration(
+        style: const TextStyle(color: Colors.grey, fontSize: 17),
+        decoration: const InputDecoration(
           border: InputBorder.none,
           hintText: "Reward Title",
           hintStyle: TextStyle(
@@ -258,7 +268,7 @@ class _AddRewardState extends State<AddReward> {
   Widget label(String label) {
     return Text(
       label,
-      style: TextStyle(
+      style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 16.5,

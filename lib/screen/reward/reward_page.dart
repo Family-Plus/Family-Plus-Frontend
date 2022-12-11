@@ -12,12 +12,10 @@ class RewardList extends StatefulWidget {
 }
 
 class _RewardListState extends State<RewardList> {
-  final Stream<QuerySnapshot> _stream =
-  FirebaseFirestore.instance.collection("reward").snapshots();
 
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
 
@@ -57,7 +55,7 @@ class _RewardListState extends State<RewardList> {
           stream: getUser(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
             Map<String, dynamic> documentFields =
@@ -68,7 +66,7 @@ class _RewardListState extends State<RewardList> {
               builder: (context, snapshot) {
 
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 return ListView.builder(
@@ -84,9 +82,7 @@ class _RewardListState extends State<RewardList> {
                       },
                       child: RewardCard(
                         id: snapshot.data!.docs[index].id,
-                        title: document["title"] == null
-                            ? "Judul Kosong"
-                            : document["title"],
+                        title: document["title"] ?? "Judul Kosong",
                         value: document["number"],
                       ),
                     );
@@ -99,7 +95,7 @@ class _RewardListState extends State<RewardList> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (builder) => AddReward()),
+            MaterialPageRoute(builder: (builder) => const AddReward()),
           );
         },
         backgroundColor: Colors.green,

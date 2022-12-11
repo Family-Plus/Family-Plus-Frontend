@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:family_plus/screen/login/login_screen.dart';
 import 'package:family_plus/screen/history/reward_history.dart';
 import 'package:family_plus/screen/history/todo_history.dart';
 import 'package:family_plus/services/auth_state_changes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,8 +16,8 @@ class LogOutPage extends StatefulWidget {
 
 class _LogOutPageState extends State<LogOutPage> {
   Stream<DocumentSnapshot> getUser() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
 
@@ -27,7 +27,7 @@ class _LogOutPageState extends State<LogOutPage> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient:
               LinearGradient(colors: [Color(0xff1d1e26), Color(0xff252041)]),
         ),
@@ -36,52 +36,52 @@ class _LogOutPageState extends State<LogOutPage> {
               stream: getUser(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 Map<String, dynamic> documentFields =
                     snapshot.data!.data() as Map<String, dynamic>;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 25, vertical: 5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             height: 30,
                           ),
                           Text(
                             "Hello ${documentFields["fullName"] ?? "No Name"}",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 40,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 4,
                             ),
                           ),
-                          SizedBox(height: 8),
-                          SizedBox(height: 25),
+
+                          const SizedBox(height: 33),
                           label("Full Name"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           desc(documentFields["fullName"]),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           label("Email"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           desc(documentFields["email"]),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           label("Current Exp"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           desc(documentFields["exp"].toString()),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           label("Group Id"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           buttonId(context, documentFields["groupId"]),
-                          SizedBox(height: 25),
+                          const SizedBox(height: 25),
                           label("History"),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           IntrinsicHeight(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -100,11 +100,11 @@ class _LogOutPageState extends State<LogOutPage> {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 50,
                           ),
                           button(context),
-                          SizedBox(height: 30),
+                          const SizedBox(height: 30),
                         ],
                       ),
                     )
@@ -119,7 +119,7 @@ class _LogOutPageState extends State<LogOutPage> {
   void _copyGroupId(BuildContext context, String id) {
     Clipboard.setData(ClipboardData(text: id)).then((_) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Group Id Succes To Copy")));
+          .showSnackBar(const SnackBar(content: Text("Group Id Succes To Copy")));
     });
   }
 
@@ -127,11 +127,13 @@ class _LogOutPageState extends State<LogOutPage> {
     String retVal = "error";
 
     try {
-      FirebaseAuth _auth = FirebaseAuth.instance;
-      await _auth.signOut();
+      FirebaseAuth auth = FirebaseAuth.instance;
+      await auth.signOut();
       retVal = "success";
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
     return retVal;
   }
@@ -139,7 +141,7 @@ class _LogOutPageState extends State<LogOutPage> {
   Widget label(String label) {
     return Text(
       label,
-      style: TextStyle(
+      style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 20,
@@ -150,7 +152,7 @@ class _LogOutPageState extends State<LogOutPage> {
   Widget desc(String label) {
     return Text(
       label,
-      style: TextStyle(
+      style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 15,
@@ -166,16 +168,16 @@ class _LogOutPageState extends State<LogOutPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
+          gradient: const LinearGradient(
             colors: [
               Color(0xff8a32f1),
-              Color(0xff8ad32f9),
+              Color(0xffad32f9),
             ],
           ),
         ),
         child: Center(
           child: Text(id,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w600)),
@@ -187,17 +189,17 @@ class _LogOutPageState extends State<LogOutPage> {
   Widget button(context) {
     return InkWell(
       onTap: () async {
-        String _returnString = await signOut();
-        if (_returnString == "success") {
+        String returnString = await signOut();
+        if (returnString == "success") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (builder) => AuthChanges()),
+            MaterialPageRoute(builder: (builder) => const AuthChanges()),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(_returnString),
-              duration: Duration(seconds: 2),
+              content: Text(returnString),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -207,11 +209,11 @@ class _LogOutPageState extends State<LogOutPage> {
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(colors: [
+            gradient: const LinearGradient(colors: [
               Color(0xff8a32f1),
-              Color(0xff8ad32f9),
+              Color(0xffad32f9),
             ])),
-        child: Center(
+        child: const Center(
           child: Text("LogOut",
               style: TextStyle(
                   color: Colors.white,
@@ -229,7 +231,7 @@ class _LogOutPageState extends State<LogOutPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (builder) => TodoHistory(),
+            builder: (builder) => const TodoHistory(),
           ),
         );
       },
@@ -238,17 +240,17 @@ class _LogOutPageState extends State<LogOutPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icons, color: Colors.white),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(nameHistory,
               style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+                  const TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
         ],
       ),
     );
   }
 
   Widget buildDivider() {
-    return Container(
+    return const SizedBox(
       height: 24,
       child: VerticalDivider(),
     );

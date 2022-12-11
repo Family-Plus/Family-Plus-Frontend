@@ -3,6 +3,7 @@ import 'package:family_plus/screen/create%20group/create_group.dart';
 import 'package:family_plus/screen/join%20group/join_group.dart';
 import 'package:family_plus/widgets/member_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,32 +18,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void didChangeDependencies() {
-    showExpUser();
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     isUserJoined();
-    print(checkJoin);
   }
 
   Future<String> isJoin() async {
     String retVal = "error";
-    FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     try {
-      DocumentSnapshot _docSnapshot =
-          await _firestore.collection("users").doc(uid).get();
+      DocumentSnapshot docSnapshot =
+          await firestore.collection("users").doc(uid).get();
 
-      if (_docSnapshot.exists) {
+      if (docSnapshot.exists) {
         Map<String, dynamic> data =
-            _docSnapshot.data()! as Map<String, dynamic>;
+            docSnapshot.data()! as Map<String, dynamic>;
 
         if (data['groupId'] != "") {
           retVal = "succes";
         }
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
     return retVal;
   }
@@ -62,8 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void showDisplayName() async {
     var collection = FirebaseFirestore.instance.collection('users');
     //userUid is the current auth user
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     var docSnapshot = await collection.doc(uid).get();
 
     Map<String, dynamic> data = docSnapshot.data()!;
@@ -75,8 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void showDisplayGroup() async {
     //userUid is the current auth user
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     var collectionUser = FirebaseFirestore.instance.collection('users');
     var docSnapshotUser = await collectionUser.doc(uid).get();
     Map<String, dynamic> dataUser = docSnapshotUser.data()!;
@@ -92,25 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
         groupName = data['name'];
       });
     }
-
-
   }
 
-  int anu = 0;
-
-  void showExpUser() async {
-    var collection = FirebaseFirestore.instance.collection('users');
-    //userUid is the current auth user
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
-    var docSnapshot = await collection.doc(uid).get();
-
-    Map<String, dynamic> data = docSnapshot.data()!;
-
-    setState(() {
-      anu = data['exp'];
-    });
-  }
 
   @override
   void initState() {
@@ -123,8 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> member = [];
 
   void getListMember() async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     var collectionUser = FirebaseFirestore.instance.collection('users');
     var docSnapshotUser = await collectionUser.doc(uid).get();
     Map<String, dynamic> dataUser = docSnapshotUser.data()!;
@@ -140,12 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  final Stream<QuerySnapshot> _stream =
-      FirebaseFirestore.instance.collection("Todo").snapshots();
 
   Stream<DocumentSnapshot> provideDocumentFieldStream() {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    String uid = _auth.currentUser!.uid;
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser!.uid;
     return FirebaseFirestore.instance.collection('users').doc(uid).snapshots();
   }
 
@@ -181,16 +163,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 stream: provideDocumentFieldStream(),
                 builder: (context, AsyncSnapshot snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   Map<String, dynamic> documentFields =
                       snapshot.data!.data() as Map<String, dynamic>;
                   return Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
-                        documentFields["exp"].toString() ?? "kosong",
-                        style: TextStyle(
+                        documentFields["exp"].toString(),
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -201,106 +183,102 @@ class _HomeScreenState extends State<HomeScreen> {
                 }),
           ],
         ),
-        body: Container(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //GREATING
-                  Text(
-                    "Hai $username",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //GREATING
+                Text(
+                  "Hai $username",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
 
-                  //INFO BENNER
-                  Container(
-                    width: double.maxFinite,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 90,
-                    ),
-                    margin: const EdgeInsets.symmetric(vertical: 32),
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xFFFAD2D2),
-                          Color(0xFFBCD4E6),
-                        ],
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Nama Group : ${groupName ?? "Not In Group"}  ",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
+                //INFO BENNER
+                Container(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 90,
+                  ),
+                  margin: const EdgeInsets.symmetric(vertical: 32),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFFFAD2D2),
+                        Color(0xFFBCD4E6),
+                      ],
                     ),
                   ),
+                  child: Center(
+                    child: Text(
+                      "Nama Group : $groupName  ",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ),
 
-                  //TITLE
-                  Text(
-                    checkJoin ? "List Family Member" : "Join or Create Group Here",
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                //TITLE
+                Text(
+                  checkJoin ? "List Family Member" : "Join or Create Group Here",
+                  style: const TextStyle(
+                    fontSize: 24,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                checkJoin ? const SizedBox(height: 10) : const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32),
+                  child: Center(
+                    child: Text(
+                          "You haven't been in the family group",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
-                  checkJoin ? SizedBox(height: 10) : Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32),
-                    child: Center(
-                      child: Text(
-                            "You haven't been in the family group",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  checkJoin
-                      ? Container(
-                          child: StreamBuilder<DocumentSnapshot>(
-                              stream: provideDocumentFieldStream(),
-                              builder: (context, AsyncSnapshot snapshot) {
-                                if (!snapshot.hasData) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                Map<String, dynamic> documentFields =
-                                    snapshot.data!.data() as Map<String, dynamic>;
-                                return Padding(
-                                  padding: EdgeInsets.all(3),
-                                  child: StreamBuilder<DocumentSnapshot>(
-                                      stream: getGroup(documentFields["groupId"]),
-                                      builder: (context, AsyncSnapshot snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return Center(child: CircularProgressIndicator());
-                                        }
-                                        Map<String, dynamic> documentFields =
-                                            snapshot.data!.data()
-                                                as Map<String, dynamic>;
-                                        List<dynamic> coba =
-                                            documentFields["members"];
-                                        return ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: coba.length,
-                                          itemBuilder: (context, index) {
-                                            return  MemberCard(id: coba[index],);
-                                          },
-                                        );
-                                      }),
-                                );
-                              }),
-                        )
-                      : buildButton(context),
-                ],
-              ),
+                ),
+                checkJoin
+                    ? StreamBuilder<DocumentSnapshot>(
+                        stream: provideDocumentFieldStream(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          Map<String, dynamic> documentFields =
+                              snapshot.data!.data() as Map<String, dynamic>;
+                          return Padding(
+                            padding: const EdgeInsets.all(3),
+                            child: StreamBuilder<DocumentSnapshot>(
+                                stream: getGroup(documentFields["groupId"]),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return const Center(child: CircularProgressIndicator());
+                                  }
+                                  Map<String, dynamic> documentFields =
+                                      snapshot.data!.data()
+                                          as Map<String, dynamic>;
+                                  List<dynamic> coba =
+                                      documentFields["members"];
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: coba.length,
+                                    itemBuilder: (context, index) {
+                                      return  MemberCard(id: coba[index],);
+                                    },
+                                  );
+                                }),
+                          );
+                        })
+                    : buildButton(context),
+              ],
             ),
           ),
         ),
